@@ -1,11 +1,15 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.io.Serializable;
+import java.util.Collection;
 
 @Entity
 @Table(name = "user")
-public class User implements Serializable {
+public class User implements UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -76,6 +80,32 @@ public class User implements Serializable {
     // Сеттер для student
     public void setStudent(Student student) {
         this.student = student;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Тут можно добавить логику для ролей пользователя (например, добавить роль пользователя)
+        return null; // Пока ничего не возвращаем, можно реализовать через роль, если нужно
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // Если необходимо, добавь логику для проверки
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // Если необходимо, добавь логику для проверки
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // Если необходимо, добавь логику для проверки
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // Если необходимо, добавь логику для проверки
     }
 
     @Override

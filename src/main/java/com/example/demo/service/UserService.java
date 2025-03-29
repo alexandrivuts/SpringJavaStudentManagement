@@ -3,13 +3,15 @@ package com.example.demo.service;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -53,5 +55,15 @@ public class UserService {
     // Метод для поиска пользователя по username
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    // Реализация метода loadUserByUsername из UserDetailsService
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        return user; // Возвращаем User как UserDetails (предполагаем, что User имплементирует UserDetails)
     }
 }
