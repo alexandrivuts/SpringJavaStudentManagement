@@ -29,13 +29,39 @@ public class UserService implements org.springframework.security.core.userdetail
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        // 1. Добавляем логирование для отладки
+        System.out.println("[DEBUG] Attempting to load user: " + username);
 
+        // 2. Ищем пользователя
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    System.out.println("[ERROR] User not found: " + username);
+                    return new UsernameNotFoundException("Invalid credentials");
+                });
+
+        // 3. Проверяем важные поля
+        if (user.getPassword() == null) {
+            System.out.println("[ERROR] No password set for user: " + username);
+            throw new UsernameNotFoundException("User password not set");
+        }
+
+        if (user.getRole() == null) {
+            System.out.println("[WARN] No roles assigned to user: " + username);
+        }
+
+        // 4. Создаем UserDetails с проверкой статуса
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
-                .authorities(Collections.singleton(new SimpleGrantedAuthority(user.getRole().getRoleName())))
+                .disabled(false) // Активируем аккаунт
+                .accountExpired(false)
+                .credentialsExpired(false)
+                .accountLocked(false)
+                .authorities(
+                        user.getRole() != null ?
+                                Collections.singleton(new SimpleGrantedAuthority(user.getRole().getRoleName())) :
+                                Collections.emptyList()
+                )
                 .build();
     }
 
