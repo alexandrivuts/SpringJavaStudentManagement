@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 
 @Entity
@@ -15,7 +16,7 @@ public class Group implements Serializable {
     @Column(name = "groupNumber", unique = true)
     private int groupNumber;
 
-    @Column(name = "course")
+    @Column(name = "course", unique = true)
     private int course;
 
     @Column(name = "faculty")
@@ -24,21 +25,19 @@ public class Group implements Serializable {
     @Column(name = "specialization")
     private String specialization;
 
-    // Геттеры и сеттеры
-
     public int getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
+    public void setGroupId(int group_id) {
+        this.groupId = group_id;
     }
 
     public int getGroupNumber() {
         return groupNumber;
     }
 
-    public void setGroupNumber(int groupNumber) {
+    public void setGroupNumber(Integer groupNumber) {
         this.groupNumber = groupNumber;
     }
 
@@ -46,7 +45,7 @@ public class Group implements Serializable {
         return course;
     }
 
-    public void setCourse(int course) {
+    public void setCourse(Integer course) {
         this.course = course;
     }
 
@@ -64,16 +63,5 @@ public class Group implements Serializable {
 
     public void setSpecialization(String specialization) {
         this.specialization = specialization;
-    }
-
-    @Override
-    public String toString() {
-        return "Group{" +
-                "groupId=" + groupId +
-                ", groupNumber=" + groupNumber +
-                ", course=" + course +
-                ", faculty='" + faculty + '\'' +
-                ", specialization='" + specialization + '\'' +
-                '}';
     }
 }

@@ -1,8 +1,8 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "grades")
@@ -22,9 +22,7 @@ public class Grades implements Serializable {
     private Exams exams;
 
     @Column(name = "grade")
-    private BigDecimal grade;
-
-    // Геттеры и сеттеры
+    private Float grade;
 
     public int getGradeId() {
         return gradeId;
@@ -34,12 +32,12 @@ public class Grades implements Serializable {
         this.gradeId = gradeId;
     }
 
-    public Student getStudent() {
-        return student;
+    public Float getGrade() {
+        return grade;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
+    public void setGrade(Float grade) {
+        this.grade = grade;
     }
 
     public Exams getExams() {
@@ -50,21 +48,11 @@ public class Grades implements Serializable {
         this.exams = exams;
     }
 
-    public BigDecimal getGrade() {
-        return grade;
+    public Student getStudent() {
+        return student;
     }
 
-    public void setGrade(BigDecimal grade) {
-        this.grade = grade;
-    }
-
-    @Override
-    public String toString() {
-        return "Grades{" +
-                "gradeId=" + gradeId +
-                ", student=" + student +
-                ", exams=" + exams +
-                ", grade=" + grade +
-                '}';
+    public void setStudent(Student student) {
+        this.student = student;
     }
 }

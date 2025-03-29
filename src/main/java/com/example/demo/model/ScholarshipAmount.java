@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -12,26 +13,24 @@ public class ScholarshipAmount {
     @Column(name = "amount_id", nullable = false)
     private int amountId;
 
-    @Column(name = "min_average")
-    private BigDecimal minAverage;
+    @Column(name = "min_average", unique = true)
+    private BigDecimal minAverage; // изменено с Float на BigDecimal
 
-    @Column(name = "max_average")
-    private BigDecimal maxAverage;
+    @Column(name = "max_average", unique = true)
+    private BigDecimal maxAverage; // изменено с Float на BigDecimal
 
-    @Column(name = "amount")
-    private BigDecimal amount;
+    @Column(name = "amount", unique = true)
+    private BigDecimal amount; // изменено с int на BigDecimal
 
-    // Геттеры и сеттеры
-
-    public int getAmountId() {
+    public int getAmount_id() {
         return amountId;
     }
 
-    public void setAmountId(int amountId) {
+    public void setAmount_id(int amountId) {
         this.amountId = amountId;
     }
 
-    public BigDecimal getMinAverage() {
+    public BigDecimal getMin_average() {
         return minAverage;
     }
 
@@ -43,7 +42,7 @@ public class ScholarshipAmount {
         return maxAverage;
     }
 
-    public void setMaxAverage(BigDecimal maxAverage) {
+    public void setMax_average(BigDecimal maxAverage) {
         this.maxAverage = maxAverage;
     }
 
@@ -55,13 +54,4 @@ public class ScholarshipAmount {
         this.amount = amount;
     }
 
-    @Override
-    public String toString() {
-        return "ScholarshipAmount{" +
-                "amountId=" + amountId +
-                ", minAverage=" + minAverage +
-                ", maxAverage=" + maxAverage +
-                ", amount=" + amount +
-                '}';
-    }
 }

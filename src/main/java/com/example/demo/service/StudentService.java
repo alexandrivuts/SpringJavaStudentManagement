@@ -11,43 +11,58 @@ import java.util.Optional;
 @Service
 public class StudentService {
 
-    @Autowired
-    private StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
 
-    // Метод для получения всех студентов
-    public List<Student> getAllStudents() {
+    @Autowired
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
+    public void insert(Student student) {
+        if (student.getUser() == null) {
+            throw new IllegalArgumentException("Студент должен быть связан с пользователем.");
+        }
+        studentRepository.save(student);
+    }
+
+    public void update(Student student) {
+        if (student.getStudent_id() <= 0) {
+            throw new IllegalArgumentException("Некорректный ID студента.");
+        }
+        studentRepository.save(student);
+    }
+
+    public void delete(int studentId) {
+        Student existingStudent = findById(studentId);
+        studentRepository.delete(existingStudent);
+    }
+
+    public Student findById(int studentId) {
+        return studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Студент с ID " + studentId + " не найден."));
+    }
+
+    public List<Student> findAll() {
         return studentRepository.findAll();
     }
 
-    // Метод для получения студента по ID
-    public Optional<Student> getStudentById(int studentId) {
-        return studentRepository.findById(studentId);
-    }
-
-    // Метод для добавления нового студента
-    public Student addStudent(Student student) {
-        return studentRepository.save(student);
-    }
-
-    // Метод для обновления студента
-    public Student updateStudent(int studentId, Student updatedStudent) {
-        Optional<Student> existingStudent = studentRepository.findById(studentId);
-        if (existingStudent.isPresent()) {
-            Student student = existingStudent.get();
-            student.setName(updatedStudent.getName());
-            student.setLastname(updatedStudent.getLastname());
-            student.setEmail(updatedStudent.getEmail());
-            student.setAverageGrade(updatedStudent.getAverageGrade());
-            // Можно добавить обновление других полей, если нужно
-            return studentRepository.save(student);
-        } else {
-            // Можно выбросить исключение, если студент не найден
-            throw new RuntimeException("Student not found");
+    public List<Student> findByGroupId(int groupId) {
+        List<Student> students = studentRepository.findAll().stream()
+                .filter(student -> student.getGroup() != null && student.getGroup().getGroupId() == groupId)
+                .toList();
+        if (students.isEmpty()) {
+            throw new IllegalArgumentException("Нет студентов в группе с ID " + groupId);
         }
+        return students;
     }
 
-    // Метод для удаления студента
-    public void deleteStudent(int studentId) {
-        studentRepository.deleteById(studentId);
+    public Student findByUsername(String username) {
+        return studentRepository.findByUser_username(username)
+                .orElseThrow(() -> new IllegalArgumentException("Студент с username " + username + " не найден."));
+    }
+
+    public Student findByUserId(int userId) {
+        return studentRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Студент с user ID " + userId + " не найден."));
     }
 }

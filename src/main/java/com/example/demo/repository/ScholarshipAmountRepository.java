@@ -4,7 +4,11 @@ import com.example.demo.model.ScholarshipAmount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @Repository
 public interface ScholarshipAmountRepository extends JpaRepository<ScholarshipAmount, Integer> {
-    // Можно добавить кастомные запросы, если нужно
+    List<ScholarshipAmount> findByMinAverageLessThanAndMaxAverageGreaterThanEqual(BigDecimal minAverage, BigDecimal maxAverage);
+    List<ScholarshipAmount> findByMinAverageGreaterThanEqualAndMaxAverageLessThan(BigDecimal minAverage, BigDecimal maxAverage);
 }

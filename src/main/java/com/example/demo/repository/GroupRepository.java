@@ -4,7 +4,11 @@ import com.example.demo.model.Group;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Integer> {
-    // Можно добавить кастомные запросы, если нужно
+    Group findByGroupNumber(int groupNumber);
+    List<Group> findByFaculty(String faculty);
+    List<Group> findByCourse(int course);
 }

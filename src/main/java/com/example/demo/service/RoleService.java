@@ -41,7 +41,10 @@ public class RoleService {
             throw new RuntimeException("Role not found");
         }
     }
-
+    // Получение роли по умолчанию (например, USER)
+    public Role getDefaultRole() {
+        return roleRepository.findByRoleName("USER");
+    }
     // Метод для удаления роли
     public void deleteRole(int roleId) {
         roleRepository.deleteById(roleId);

@@ -10,7 +10,7 @@ public class Student implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "student_id", nullable = false)
-    private int studentId;  // Переименовали поле
+    private int studentId;
 
     @Column(name = "averageGrade")
     private Double averageGrade;
@@ -44,22 +44,52 @@ public class Student implements Serializable {
     @Transient
     private String specialization;
 
-    // Геттеры и сеттеры
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public int getStudentId() {
+    public String getEmail() {
+        return email;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setGroupNumber(int groupNumber) {
+        this.groupNumber = groupNumber;
+    }
+
+    public int getGroupNumber() {
+        return groupNumber;
+    }
+
+    public void setCourse(int course) {
+        this.course = course;
+    }
+
+    public int getCourse() {
+        return course;
+    }
+
+    public int getStudent_id() {
         return studentId;
     }
 
-    public void setStudentId(int studentId) {
+    public void setStudent_id(int studentId) {
         this.studentId = studentId;
-    }
-
-    public Double getAverageGrade() {
-        return averageGrade;
-    }
-
-    public void setAverageGrade(Double averageGrade) {
-        this.averageGrade = averageGrade;
     }
 
     public User getUser() {
@@ -70,6 +100,14 @@ public class Student implements Serializable {
         this.user = user;
     }
 
+    public Double getAverageGrade() {
+        return averageGrade;
+    }
+
+    public void setAverageGrade(Double averageGrade) {
+        this.averageGrade = averageGrade;
+    }
+
     public Group getGroup() {
         return group;
     }
@@ -78,76 +116,19 @@ public class Student implements Serializable {
         this.group = group;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public int getGroupNumber() {
-        return groupNumber;
-    }
-
-    public void setGroupNumber(int groupNumber) {
-        this.groupNumber = groupNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public int getCourse() {
-        return course;
-    }
-
-    public void setCourse(int course) {
-        this.course = course;
-    }
-
-    public String getFaculty() {
-        return faculty;
-    }
-
-    public void setFaculty(String faculty) {
-        this.faculty = faculty;
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
     }
 
     public String getSpecialization() {
         return specialization;
     }
 
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
+    public void setFaculty(String faculty) {
+        this.faculty = faculty;
     }
 
-    @Override
-    public String toString() {
-        return "Student{" +
-                "studentId=" + studentId +
-                ", averageGrade=" + averageGrade +
-                ", user=" + user +
-                ", group=" + group +
-                ", name='" + name + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", groupNumber=" + groupNumber +
-                ", email='" + email + '\'' +
-                ", course=" + course +
-                ", faculty='" + faculty + '\'' +
-                ", specialization='" + specialization + '\'' +
-                '}';
+    public String getFaculty() {
+        return faculty;
     }
 }

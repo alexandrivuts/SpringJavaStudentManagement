@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 
 @Entity
@@ -12,10 +13,8 @@ public class Role implements Serializable {
     @Column(name = "role_id", nullable = false)
     private int roleId;
 
-    @Column(name = "roleName")
+    @Column(name = "roleName", unique = true, nullable = false)
     private String roleName;
-
-    // Геттеры и сеттеры
 
     public int getRoleId() {
         return roleId;
@@ -31,13 +30,5 @@ public class Role implements Serializable {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
-    }
-
-    @Override
-    public String toString() {
-        return "Role{" +
-                "roleId=" + roleId +
-                ", roleName='" + roleName + '\'' +
-                '}';
     }
 }

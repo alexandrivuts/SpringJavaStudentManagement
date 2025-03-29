@@ -5,47 +5,69 @@ import com.example.demo.repository.ScholarshipAmountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ScholarshipAmountService {
 
+    private final ScholarshipAmountRepository scholarshipAmountRepository;
+
     @Autowired
-    private ScholarshipAmountRepository scholarshipAmountRepository;
-
-    // Метод для получения всех записей о стипендиях
-    public List<ScholarshipAmount> getAllScholarshipAmounts() {
-        return scholarshipAmountRepository.findAll();
+    public ScholarshipAmountService(ScholarshipAmountRepository scholarshipAmountRepository) {
+        this.scholarshipAmountRepository = scholarshipAmountRepository;
     }
 
-    // Метод для получения записи о стипендии по ID
-    public Optional<ScholarshipAmount> getScholarshipAmountById(int amountId) {
-        return scholarshipAmountRepository.findById(amountId);
-    }
-
-    // Метод для добавления новой записи о стипендии
-    public ScholarshipAmount addScholarshipAmount(ScholarshipAmount scholarshipAmount) {
-        return scholarshipAmountRepository.save(scholarshipAmount);
-    }
-
-    // Метод для обновления записи о стипендии
-    public ScholarshipAmount updateScholarshipAmount(int amountId, ScholarshipAmount updatedScholarshipAmount) {
-        Optional<ScholarshipAmount> existingScholarshipAmount = scholarshipAmountRepository.findById(amountId);
-        if (existingScholarshipAmount.isPresent()) {
-            ScholarshipAmount scholarshipAmount = existingScholarshipAmount.get();
-            scholarshipAmount.setMinAverage(updatedScholarshipAmount.getMinAverage());
-            scholarshipAmount.setMaxAverage(updatedScholarshipAmount.getMaxAverage());
-            scholarshipAmount.setAmount(updatedScholarshipAmount.getAmount());
-            return scholarshipAmountRepository.save(scholarshipAmount);
+    public void insert(ScholarshipAmount scholarshipAmount) {
+        if (isRangeValid(scholarshipAmount.getMin_average(), scholarshipAmount.getMaxAverage())
+                && isRangeUnique(scholarshipAmount)) {
+            scholarshipAmountRepository.save(scholarshipAmount);
         } else {
-            // Можно выбросить исключение, если запись не найдена
-            throw new RuntimeException("ScholarshipAmount not found");
+            throw new IllegalArgumentException("Invalid or overlapping scholarship range.");
         }
     }
 
-    // Метод для удаления записи о стипендии
-    public void deleteScholarshipAmount(int amountId) {
-        scholarshipAmountRepository.deleteById(amountId);
+    public void update(ScholarshipAmount scholarshipAmount) {
+        if (isRangeValid(scholarshipAmount.getMin_average(), scholarshipAmount.getMaxAverage())
+                && isRangeUniqueForUpdate(scholarshipAmount)) {
+            scholarshipAmountRepository.save(scholarshipAmount);
+        } else {
+            throw new IllegalArgumentException("Invalid or overlapping scholarship range.");
+        }
+    }
+
+    public void delete(int scholarshipAmountId) {
+        Optional<ScholarshipAmount> existing = scholarshipAmountRepository.findById(scholarshipAmountId);
+        if (existing.isEmpty()) {
+            throw new IllegalArgumentException("Scholarship amount not found for deletion.");
+        }
+        scholarshipAmountRepository.deleteById(scholarshipAmountId);
+    }
+
+    public ScholarshipAmount findById(int scholarshipAmountId) {
+        return scholarshipAmountRepository.findById(scholarshipAmountId)
+                .orElseThrow(() -> new IllegalArgumentException("Scholarship amount not found."));
+    }
+
+    public List<ScholarshipAmount> findAll() {
+        return scholarshipAmountRepository.findAll();
+    }
+
+    private boolean isRangeValid(BigDecimal min, BigDecimal max) {
+        return min != null && max != null && min.compareTo(max) < 0;
+    }
+
+    private boolean isRangeUnique(ScholarshipAmount scholarshipAmount) {
+        List<ScholarshipAmount> existingAmounts = scholarshipAmountRepository.findByMinAverageLessThanAndMaxAverageGreaterThanEqual(
+                scholarshipAmount.getMin_average(), scholarshipAmount.getMaxAverage());
+        return existingAmounts.isEmpty();
+    }
+
+    private boolean isRangeUniqueForUpdate(ScholarshipAmount scholarshipAmount) {
+        List<ScholarshipAmount> existingAmounts = scholarshipAmountRepository.findByMinAverageLessThanAndMaxAverageGreaterThanEqual(
+                scholarshipAmount.getMin_average(), scholarshipAmount.getMaxAverage());
+        return existingAmounts.isEmpty() || existingAmounts.stream()
+                .allMatch(existing -> existing.getAmount_id() != scholarshipAmount.getAmount_id());
     }
 }

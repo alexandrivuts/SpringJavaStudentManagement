@@ -6,45 +6,62 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ExamsService {
 
+    private final ExamsRepository examsRepository;
+
     @Autowired
-    private ExamsRepository examsRepository;
-
-    // Метод для получения всех экзаменов
-    public List<Exams> getAllExams() {
-        return examsRepository.findAll();
+    public ExamsService(ExamsRepository examsRepository) {
+        this.examsRepository = examsRepository;
     }
 
-    // Метод для получения экзамена по ID
-    public Optional<Exams> getExamById(int examId) {
-        return examsRepository.findById(examId);
-    }
-
-    // Метод для добавления нового экзамена
-    public Exams addExam(Exams exam) {
-        return examsRepository.save(exam);
-    }
-
-    // Метод для обновления экзамена
-    public Exams updateExam(int examId, Exams updatedExam) {
-        Optional<Exams> existingExam = examsRepository.findById(examId);
-        if (existingExam.isPresent()) {
-            Exams exam = existingExam.get();
-            exam.setSubject(updatedExam.getSubject());
-            exam.setCourse(updatedExam.getCourse());
-            return examsRepository.save(exam);
+    public void insert(Exams exam) {
+        if (isExamValid(exam)) {
+            examsRepository.save(exam);
         } else {
-            // Можно выбросить исключение, если запись не найдена
-            throw new RuntimeException("Exam not found");
+            throw new IllegalArgumentException("Invalid exam data.");
         }
     }
 
-    // Метод для удаления экзамена
-    public void deleteExam(int examId) {
-        examsRepository.deleteById(examId);
+    public void update(Exams exam) {
+        if (isExamValid(exam)) {
+            examsRepository.save(exam);
+        } else {
+            throw new IllegalArgumentException("Invalid exam data.");
+        }
+    }
+
+    public void delete(int ExamId) {
+        if (!examsRepository.existsById(ExamId)) {
+            throw new IllegalArgumentException("Exam not found for deletion.");
+        }
+        examsRepository.deleteById(ExamId);
+    }
+
+    public Exams findById(int ExamId) {
+        return examsRepository.findById(ExamId)
+                .orElseThrow(() -> new IllegalArgumentException("Exam not found."));
+    }
+
+    public List<Exams> findAll() {
+        List<Exams> exams = examsRepository.findAll();
+        if (exams.isEmpty()) {
+            throw new IllegalStateException("No exams found.");
+        }
+        return exams;
+    }
+
+    public List<Exams> findByCourse(int course) {
+        List<Exams> exams = examsRepository.findByCourse(course);
+        if (exams.isEmpty()) {
+            throw new IllegalStateException("No exams found for course: " + course);
+        }
+        return exams;
+    }
+
+    private boolean isExamValid(Exams exam) {
+        return exam.getSubject() != null && !exam.getSubject().isEmpty() && exam.getCourse() > 0;
     }
 }

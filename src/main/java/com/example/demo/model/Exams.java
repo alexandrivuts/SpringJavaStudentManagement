@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 
 @Entity
@@ -12,20 +13,18 @@ public class Exams implements Serializable {
     @Column(name = "exam_id", nullable = false)
     private int examId;
 
-    @Column(name = "subject", nullable = false)
+    @Column(name = "subject", unique = true)
     private String subject;
 
-    @Column(name = "course")
+    @Column(name = "course", unique = true)
     private int course;
 
-    // Геттеры и сеттеры
-
-    public int getExamId() {
+    public int getExam_id() {
         return examId;
     }
 
-    public void setExamId(int examId) {
-        this.examId = examId;
+    public void setExam_id(int exam_id) {
+        this.examId = exam_id;
     }
 
     public String getSubject() {
@@ -40,16 +39,7 @@ public class Exams implements Serializable {
         return course;
     }
 
-    public void setCourse(int course) {
+    public void setCourse(Integer course) {
         this.course = course;
-    }
-
-    @Override
-    public String toString() {
-        return "Exams{" +
-                "examId=" + examId +
-                ", subject='" + subject + '\'' +
-                ", course=" + course +
-                '}';
     }
 }
