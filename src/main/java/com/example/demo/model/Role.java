@@ -1,31 +1,43 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "role")
-@Data
-public class Role {
-
-    public enum RoleType {
-        ADMIN,      // Полный доступ
-        USER,       // Обычный пользователь (студент)
-        ACCOUNTANT  // Бухгалтер (начисление стипендий)
-    }
+public class Role implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "role_id", nullable = false)
+    private int roleId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(unique = true, nullable = false)
-    private RoleType name;
+    @Column(name = "roleName")
+    private String roleName;
 
-    // Примеры конструкторов
-    public Role() {}
+    // Геттеры и сеттеры
 
-    public Role(RoleType name, String description) {
-        this.name = name;
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "roleId=" + roleId +
+                ", roleName='" + roleName + '\'' +
+                '}';
     }
 }

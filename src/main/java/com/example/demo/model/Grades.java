@@ -1,44 +1,70 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "grades")
-@Getter
-@Setter
-public class Grades {
+public class Grades implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "grade_id", nullable = false)
-    private int grade_id;
+    private int gradeId;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
+    @JoinColumn(name = "student_id")
     private Student student;
 
     @ManyToOne
-    @JoinColumn(name = "exam_id", nullable = false)
-    private Exams exam;
+    @JoinColumn(name = "exam_id")
+    private Exams exams;
 
-    @Column(name = "grade", nullable = false)
-    private Float grade;
+    @Column(name = "grade")
+    private BigDecimal grade;
 
-    // Конструкторы
-    public Grades() {}
+    // Геттеры и сеттеры
 
-    public Grades(Student student, Exams exam, Float grade) {
+    public int getGradeId() {
+        return gradeId;
+    }
+
+    public void setGradeId(int gradeId) {
+        this.gradeId = gradeId;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
         this.student = student;
-        this.exam = exam;
+    }
+
+    public Exams getExams() {
+        return exams;
+    }
+
+    public void setExams(Exams exams) {
+        this.exams = exams;
+    }
+
+    public BigDecimal getGrade() {
+        return grade;
+    }
+
+    public void setGrade(BigDecimal grade) {
         this.grade = grade;
     }
 
-    // Дополнительные методы
-    public String getGradeInfo() {
-        return String.format("%s: %.1f (%s)",
-                exam.getSubject(),
-                grade,
-                student.getUser().getSurname());
+    @Override
+    public String toString() {
+        return "Grades{" +
+                "gradeId=" + gradeId +
+                ", student=" + student +
+                ", exams=" + exams +
+                ", grade=" + grade +
+                '}';
     }
 }

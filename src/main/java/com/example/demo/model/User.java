@@ -1,57 +1,90 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "user")
-@Data
-@NoArgsConstructor
-public class User {
+public class User implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
-    private int user_id;  // Оставляем исходное название поля
+    private int userId;
 
-    @Column(name = "username", unique = true, nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
-    @Column(name = "surname", nullable = false)
-    private String surname;
-
-    @Column(name = "birthday", nullable = false)
-    private String birthday;  // Восстановлено
-
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "phoneNumber", nullable = false)
-    private String phoneNumber;  // Возвращаем nullable=false
+    @OneToOne(mappedBy = "user")
+    private Student student;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    // Конструктор по умолчанию
+    public User() {
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    private Group group;  // Новая связь (оставляем)
+    // Геттер для userId
+    public int getUserId() {
+        return userId;
+    }
 
-    public User(String username, String password, String name, String surname,
-                String birthday, String email, String phoneNumber, Role role) {
+    // Сеттер для userId
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    // Геттер для username
+    public String getUsername() {
+        return username;
+    }
+
+    // Сеттер для username
+    public void setUsername(String username) {
         this.username = username;
+    }
+
+    // Геттер для password
+    public String getPassword() {
+        return password;
+    }
+
+    // Сеттер для password
+    public void setPassword(String password) {
         this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.birthday = birthday;
+    }
+
+    // Геттер для email
+    public String getEmail() {
+        return email;
+    }
+
+    // Сеттер для email
+    public void setEmail(String email) {
         this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.role = role;
+    }
+
+    // Геттер для student
+    public Student getStudent() {
+        return student;
+    }
+
+    // Сеттер для student
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }
