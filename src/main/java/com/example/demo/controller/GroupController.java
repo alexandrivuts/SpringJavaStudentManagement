@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Group;
+import com.example.demo.service.BsuirScheduleService;
 import com.example.demo.service.GroupService;
 import com.example.demo.service.StudentService;
 import com.example.demo.model.Student;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
