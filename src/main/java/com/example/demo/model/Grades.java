@@ -24,6 +24,18 @@ public class Grades implements Serializable {
     @Column(name = "grade")
     private Float grade;
 
+    // Конструктор по умолчанию
+    public Grades() {
+    }
+
+    // Конструктор для создания нового объекта Grades
+    public Grades(Student student, Exams exams) {
+        this.student = student;
+        this.exams = exams;
+    }
+
+    // Геттеры и сеттеры
+
     public int getGradeId() {
         return gradeId;
     }

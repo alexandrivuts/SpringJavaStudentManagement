@@ -14,15 +14,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
 
 @Service
 @Transactional
-public class UserService implements UserDetailsService{
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -43,6 +45,7 @@ public class UserService implements UserDetailsService{
         this.groupRepository = groupRepository;
     }
 
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("[AUTH] Loading user: " + username);
 
@@ -88,26 +91,32 @@ public class UserService implements UserDetailsService{
 
     private void validateUser(User user) {
         if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User cannot be null");
         }
 
-        if (user.getUsername() == null || user.getUsername().trim().isEmpty() ||
-                user.getPassword() == null || user.getPassword().trim().isEmpty() ||
-                user.getEmail() == null || user.getEmail().trim().isEmpty()) {
-            throw new IllegalArgumentException("Required fields are missing");
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is required");
+        }
+
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is required");
+        }
+
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is required");
         }
     }
 
     private void checkUsernameAvailability(String username) {
         if (userRepository.findByUsername(username).isPresent()) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists");
         }
     }
 
     private void createStudentRecord(User user, int groupNumber) {
         Group group = groupRepository.findByGroupNumber(groupNumber);
         if (group == null) {
-            throw new IllegalArgumentException("Group not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found");
         }
 
         Student student = new Student();
@@ -119,21 +128,21 @@ public class UserService implements UserDetailsService{
     public void update(User user) {
         validateUser(user);
         if (!userRepository.existsById(user.getUser_id())) {
-            throw new IllegalArgumentException("User not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
         userRepository.save(user);
     }
 
     public void delete(int userId) {
         if (!userRepository.existsById(userId)) {
-            throw new IllegalArgumentException("User not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
         userRepository.deleteById(userId);
     }
 
     public User findById(int userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
     public List<User> findAll() {
@@ -142,7 +151,7 @@ public class UserService implements UserDetailsService{
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
     public boolean isUsernameExists(String username) {

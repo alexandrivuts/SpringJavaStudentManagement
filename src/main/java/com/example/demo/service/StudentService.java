@@ -1,12 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.TranscriptDto;
-import com.example.demo.model.Exams;
-import com.example.demo.model.Grades;
-import com.example.demo.model.ScholarshipAmount;
-import com.example.demo.model.Student;
+import com.example.demo.model.*;
 import com.example.demo.repository.GradesRepository;
 import com.example.demo.repository.StudentRepository;
+import com.example.demo.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class StudentService {
 
+    private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final GradesRepository gradesRepository;
     private final GradesService gradesService;
@@ -24,7 +25,8 @@ public class StudentService {
     private final ScholarshipAmountService scholarshipAmountService;  // Сервис для стипендий
 
     @Autowired
-    public StudentService(StudentRepository studentRepository, GradesRepository gradesRepository, GradesService gradesService, ExamsService examsService, ScholarshipAmountService scholarshipAmountService) {
+    public StudentService(UserRepository userRepository, StudentRepository studentRepository, GradesRepository gradesRepository, GradesService gradesService, ExamsService examsService, ScholarshipAmountService scholarshipAmountService) {
+        this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.gradesRepository = gradesRepository;
         this.gradesService = gradesService;
@@ -48,10 +50,25 @@ public class StudentService {
         studentRepository.save(student);
     }
 
-    // Удаление студента
+    // В StudentService
+    @Transactional
     public void delete(int studentId) {
-        Student existingStudent = findById(studentId);
-        studentRepository.delete(existingStudent);
+        // 1. Находим студента
+        Student student = findById(studentId);
+        if (student == null) {
+            throw new EntityNotFoundException("Student with ID " + studentId + " not found");
+        }
+
+        // 2. Получаем связанного пользователя
+        User user = student.getUser();
+
+        // 3. Удаляем сначала студента
+        studentRepository.delete(student);
+
+        // 4. Удаляем связанного пользователя
+        if (user != null) {
+            userRepository.delete(user);
+        }
     }
 
     // Поиск студента по ID

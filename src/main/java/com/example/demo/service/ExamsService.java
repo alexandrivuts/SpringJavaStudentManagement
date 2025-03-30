@@ -53,7 +53,9 @@ public class ExamsService {
         }
         return exams;
     }
-
+    public List<Exams> getAllExams() {
+        return examsRepository.findAll();
+    }
     public List<Exams> findByCourse(int course) {
         List<Exams> exams = examsRepository.findByCourse(course);
         if (exams.isEmpty()) {

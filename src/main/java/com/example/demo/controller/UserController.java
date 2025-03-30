@@ -1,10 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.JwtService;
+import com.example.demo.model.Group;
 import com.example.demo.model.Student;
 import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.service.ExamsService;
 import com.example.demo.service.StudentService;
 import com.example.demo.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @RestController
@@ -81,6 +86,7 @@ public class UserController {
         }
     }
 
+
     // Остальные методы остаются без изменений
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User loginRequest) {
@@ -134,46 +140,83 @@ public class UserController {
     public ResponseEntity<List<User>> getAll() {
         return ResponseEntity.ok(userService.findAll());
     }
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.user.userId")
-    public ResponseEntity<?> getById(@PathVariable int id) {
-        try {
-            User user = userService.findById(id);
-            return ResponseEntity.ok(user);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
+    // Редактирование пользователя
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.user.userId")
-    public ResponseEntity<?> update(@PathVariable int id, @RequestBody User user) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody Map<String, Object> requestData) {
         try {
-            User existingUser = userService.findById(id);
+            // Получение пользователя из БД
+            User user = userService.findById(id);
 
-            // Обновляем только разрешенные поля
-            existingUser.setName(user.getName());
-            existingUser.setSurname(user.getSurname());
-            existingUser.setEmail(user.getEmail());
-            existingUser.setPhoneNumber(user.getPhoneNumber());
-            existingUser.setBirthday(user.getBirthday());
+            // Обновление данных пользователя
+            if (requestData.containsKey("name")) {
+                user.setName((String) requestData.get("name"));
+            }
+            if (requestData.containsKey("surname")) {
+                user.setSurname((String) requestData.get("surname"));
+            }
+            if (requestData.containsKey("email")) {
+                user.setEmail((String) requestData.get("email"));
+            }
+            if (requestData.containsKey("phoneNumber")) {
+                user.setPhoneNumber((String) requestData.get("phoneNumber"));
+            }
+            if (requestData.containsKey("birthday")) {
+                user.setBirthday((String) requestData.get("birthday"));
+            }
 
-            userService.update(existingUser);
-            return ResponseEntity.ok("User updated");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            // Сохраняем обновленные данные пользователя
+            userService.update(user);
+
+            return ResponseEntity.ok("User updated successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error updating user: " + e.getMessage());
         }
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> delete(@PathVariable int id) {
+    @PostMapping("/add-student")
+    @PreAuthorize("hasRole('ADMIN')")  // Только админ может вызывать
+    public ResponseEntity<?> adminRegisterUser(@RequestBody Map<String, Object> requestData) {
         try {
-            userService.delete(id);
-            return ResponseEntity.ok("User deleted");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            User user = new User();
+            user.setUsername((String) requestData.get("username"));
+            user.setPassword((String) requestData.get("password"));
+            user.setName((String) requestData.get("name"));
+            user.setSurname((String) requestData.get("surname"));
+            user.setEmail((String) requestData.get("email"));
+            user.setBirthday((String) requestData.get("birthday"));
+            user.setPhoneNumber((String) requestData.get("phoneNumber"));
+
+            int groupNumber = (Integer) requestData.get("groupNumber");
+
+            userService.insert(user, groupNumber);
+
+            User savedUser = userService.findByUsername(user.getUsername());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("user", savedUser);
+            response.put("groupNumber", groupNumber);
+            response.put("message", "Student was registered!");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+    @DeleteMapping("/delete-student/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteStudent(@PathVariable int id) {
+        try {
+            studentService.delete(id);
+            return ResponseEntity.ok()
+                    .body("Student with ID " + id + " successfully deleted");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body("Error while deleting: " + e.getMessage());
         }
     }
 }

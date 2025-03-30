@@ -25,8 +25,6 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtService jwtService;
-
-    // Используем @Lazy для отложенной инициализации UserService
     private final UserService userService;
 
     public SecurityConfig(JwtService jwtService, @Lazy UserService userService) {
@@ -44,8 +42,9 @@ public class SecurityConfig {
                                 "/api/users/register",
                                 "/api/users/login",
                                 "/error"
-                        ).permitAll()
-                        .anyRequest().authenticated()
+                        ).permitAll()  // Эти маршруты доступны для всех
+                        .requestMatchers("/api/exams/all").hasAnyRole("ADMIN", "ACCOUNTANT")  // Защищаем маршрут
+                        .anyRequest().authenticated()  // Все остальные маршруты требуют аутентификации
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -84,3 +83,5 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 }
+
+
