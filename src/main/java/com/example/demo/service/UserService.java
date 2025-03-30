@@ -1,6 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.model.Group;
+import com.example.demo.model.Student;
 import com.example.demo.model.User;
+import com.example.demo.repository.GroupRepository;
+import com.example.demo.repository.StudentRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,96 +13,122 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
 
 @Service
+@Transactional
 public class UserService implements org.springframework.security.core.userdetails.UserDetailsService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;  // Используем PasswordEncoder
+    private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
+    private final StudentRepository studentRepository;
+    private final GroupRepository groupRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleService roleService) {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       RoleService roleService,
+                       StudentRepository studentRepository,
+                       GroupRepository groupRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
+        this.studentRepository = studentRepository;
+        this.groupRepository = groupRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // 1. Добавляем логирование для отладки
-        System.out.println("[DEBUG] Attempting to load user: " + username);
+        System.out.println("[AUTH] Loading user: " + username);
 
-        // 2. Ищем пользователя
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> {
-                    System.out.println("[ERROR] User not found: " + username);
-                    return new UsernameNotFoundException("Invalid credentials");
+                    System.out.println("[AUTH ERROR] User not found: " + username);
+                    return new UsernameNotFoundException("User not found");
                 });
 
-        // 3. Проверяем важные поля
         if (user.getPassword() == null) {
-            System.out.println("[ERROR] No password set for user: " + username);
-            throw new UsernameNotFoundException("User password not set");
+            System.out.println("[AUTH ERROR] No password for user: " + username);
+            throw new UsernameNotFoundException("Invalid credentials");
         }
 
-        if (user.getRole() == null) {
-            System.out.println("[WARN] No roles assigned to user: " + username);
-        }
+        String roleName = user.getRole() != null ? user.getRole().getRoleName() : "ROLE_GUEST";
+        System.out.println("[AUTH] User role: " + roleName);
 
-        // 4. Создаем UserDetails с проверкой статуса
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
-                .disabled(false) // Активируем аккаунт
+                .disabled(false)
                 .accountExpired(false)
                 .credentialsExpired(false)
                 .accountLocked(false)
-                .authorities(
-                        user.getRole() != null ?
-                                Collections.singleton(new SimpleGrantedAuthority(user.getRole().getRoleName())) :
-                                Collections.emptyList()
-                )
+                .authorities(new SimpleGrantedAuthority(roleName))
                 .build();
     }
 
-    // Регистрация нового пользователя
-    public void insert(User user) {
-        if (isUsernameExists(user.getUsername())) {
-            throw new IllegalArgumentException("Username is already taken.");
+    public void insert(User user, int groupNumber) {
+        validateUser(user);
+        checkUsernameAvailability(user.getUsername());
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(roleService.getDefaultRole());
+
+        User savedUser = userRepository.save(user);
+        createStudentRecord(savedUser, groupNumber);
+    }
+
+    private void validateUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
         }
 
-        // Хешируем пароль перед сохранением
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty() ||
+                user.getPassword() == null || user.getPassword().trim().isEmpty() ||
+                user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Required fields are missing");
+        }
+    }
 
-        // Присваиваем роль по умолчанию, если роль не указана
-        if (user.getRole() == null) {
-            user.setRole(roleService.getDefaultRole());  // Используем роль по умолчанию, например, 'USER'
+    private void checkUsernameAvailability(String username) {
+        if (userRepository.findByUsername(username).isPresent()){
+            throw new IllegalArgumentException("Username already exists");
+        }
+    }
+
+    private void createStudentRecord(User user, int groupNumber) {
+        Group group = groupRepository.findByGroupNumber(groupNumber);
+        if (group == null) {
+            throw new IllegalArgumentException("Group not found");
         }
 
-        userRepository.save(user);
+        Student student = new Student();
+        student.setUser(user);
+        student.setGroup(group);
+        studentRepository.save(student);
     }
 
     public void update(User user) {
-        if (isUserValid(user)) {
-            userRepository.save(user);
-        } else {
-            throw new IllegalArgumentException("Invalid user data.");
+        validateUser(user);
+        if (!userRepository.existsById(user.getUser_id())) {
+            throw new IllegalArgumentException("User not found");
         }
+        userRepository.save(user);
     }
 
     public void delete(int userId) {
-        User user = findById(userId);
-        userRepository.delete(user);
+        if (!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("User not found");
+        }
+        userRepository.deleteById(userId);
     }
 
     public User findById(int userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
     public List<User> findAll() {
@@ -107,28 +137,10 @@ public class UserService implements org.springframework.security.core.userdetail
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User with username " + username + " not found."));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
     public boolean isUsernameExists(String username) {
         return userRepository.findByUsername(username).isPresent();
-    }
-
-    public User login(String username, String password) {
-        User user = findByUsername(username);
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            return user;
-        }
-        return null;
-    }
-
-    private boolean isUserValid(User user) {
-        return user.getUsername() != null && !user.getUsername().isEmpty() &&
-                user.getPassword() != null && !user.getPassword().isEmpty() &&
-                user.getName() != null && !user.getName().isEmpty() &&
-                user.getSurname() != null && !user.getSurname().isEmpty() &&
-                user.getEmail() != null && !user.getEmail().isEmpty() &&
-                user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty() &&
-                user.getBirthday() != null && !user.getBirthday().isEmpty();
     }
 }

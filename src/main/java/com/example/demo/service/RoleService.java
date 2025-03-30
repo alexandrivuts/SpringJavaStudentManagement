@@ -43,7 +43,7 @@ public class RoleService {
     }
     // Получение роли по умолчанию (например, USER)
     public Role getDefaultRole() {
-        return roleRepository.findByRoleName("USER");
+        return roleRepository.findByRoleId(1);
     }
     // Метод для удаления роли
     public void deleteRole(int roleId) {

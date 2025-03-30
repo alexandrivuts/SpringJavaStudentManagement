@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
+import com.example.demo.model.Grades;
 import com.example.demo.model.Student;
+import com.example.demo.repository.GradesRepository;
 import com.example.demo.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,10 +14,12 @@ import java.util.Optional;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final GradesRepository gradesRepository;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, GradesRepository gradesRepository) {
         this.studentRepository = studentRepository;
+        this.gradesRepository = gradesRepository; // 2. Инициализируем
     }
 
     public void insert(Student student) {
@@ -64,5 +68,16 @@ public class StudentService {
     public Student findByUserId(int userId) {
         return studentRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Студент с user ID " + userId + " не найден."));
+    }
+
+    public double calculateAverageGrade(int studentId) {
+        List<Grades> grades = gradesRepository.findByStudent_studentId(studentId);
+        if (grades == null || grades.isEmpty()) return 0.0;
+
+        return grades.stream()
+                .filter(g -> g.getGrade() != null)
+                .mapToDouble(Grades::getGrade)
+                .average()
+                .orElse(0.0);
     }
 }
