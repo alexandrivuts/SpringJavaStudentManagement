@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ScholarshipAmountService {
@@ -38,8 +37,7 @@ public class ScholarshipAmountService {
     }
 
     public void delete(int scholarshipAmountId) {
-        Optional<ScholarshipAmount> existing = scholarshipAmountRepository.findById(scholarshipAmountId);
-        if (existing.isEmpty()) {
+        if (!scholarshipAmountRepository.existsById(scholarshipAmountId)) {
             throw new IllegalArgumentException("Scholarship amount not found for deletion.");
         }
         scholarshipAmountRepository.deleteById(scholarshipAmountId);
@@ -54,20 +52,35 @@ public class ScholarshipAmountService {
         return scholarshipAmountRepository.findAll();
     }
 
+    // Проверка корректности диапазона
     private boolean isRangeValid(BigDecimal min, BigDecimal max) {
         return min != null && max != null && min.compareTo(max) < 0;
     }
 
+    // Проверка уникальности диапазона
     private boolean isRangeUnique(ScholarshipAmount scholarshipAmount) {
         List<ScholarshipAmount> existingAmounts = scholarshipAmountRepository.findByMinAverageLessThanAndMaxAverageGreaterThanEqual(
                 scholarshipAmount.getMin_average(), scholarshipAmount.getMaxAverage());
         return existingAmounts.isEmpty();
     }
 
+    // Проверка уникальности диапазона для обновления
     private boolean isRangeUniqueForUpdate(ScholarshipAmount scholarshipAmount) {
         List<ScholarshipAmount> existingAmounts = scholarshipAmountRepository.findByMinAverageLessThanAndMaxAverageGreaterThanEqual(
                 scholarshipAmount.getMin_average(), scholarshipAmount.getMaxAverage());
         return existingAmounts.isEmpty() || existingAmounts.stream()
                 .allMatch(existing -> existing.getAmount_id() != scholarshipAmount.getAmount_id());
+    }
+
+    // Метод для вычисления стипендии на основе средней оценки
+    public BigDecimal calculateScholarship(double averageGrade) {
+        List<ScholarshipAmount> scholarshipAmounts = scholarshipAmountRepository.findAll();
+
+        for (ScholarshipAmount scholarship : scholarshipAmounts) {
+            if (averageGrade >= scholarship.getMin_average().doubleValue() && averageGrade <= scholarship.getMaxAverage().doubleValue()) {
+                return scholarship.getAmount();  // Возвращаем сумму стипендии
+            }
+        }
+        return BigDecimal.ZERO;  // Если не попадает в диапазоны, то стипендии нет
     }
 }
