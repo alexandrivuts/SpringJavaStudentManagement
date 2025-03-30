@@ -8,8 +8,10 @@ import com.example.demo.repository.StudentRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class UserService implements org.springframework.security.core.userdetails.UserDetailsService {
+public class UserService implements UserDetailsService{
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -41,7 +43,6 @@ public class UserService implements org.springframework.security.core.userdetail
         this.groupRepository = groupRepository;
     }
 
-    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("[AUTH] Loading user: " + username);
 
@@ -56,8 +57,12 @@ public class UserService implements org.springframework.security.core.userdetail
             throw new UsernameNotFoundException("Invalid credentials");
         }
 
-        String roleName = user.getRole() != null ? user.getRole().getRoleName() : "ROLE_GUEST";
-        System.out.println("[AUTH] User role: " + roleName);
+        String roleName = user.getRole() != null ? user.getRole().getRoleName() : "ROLE_USER";
+        if (!roleName.startsWith("ROLE_")) {
+            roleName = "ROLE_" + roleName.toUpperCase();
+        }
+
+        System.out.println("[AUTH] User: " + user.getUsername() + " Role: " + roleName);
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
@@ -66,7 +71,7 @@ public class UserService implements org.springframework.security.core.userdetail
                 .accountExpired(false)
                 .credentialsExpired(false)
                 .accountLocked(false)
-                .authorities(new SimpleGrantedAuthority(roleName))
+                .authorities(Collections.singleton(new SimpleGrantedAuthority(roleName)))
                 .build();
     }
 
@@ -94,7 +99,7 @@ public class UserService implements org.springframework.security.core.userdetail
     }
 
     private void checkUsernameAvailability(String username) {
-        if (userRepository.findByUsername(username).isPresent()){
+        if (userRepository.findByUsername(username).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
         }
     }

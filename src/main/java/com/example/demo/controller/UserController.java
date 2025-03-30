@@ -65,7 +65,7 @@ public class UserController {
             );
 
             // 4. Генерация токена и получение сохраненного пользователя
-            String token = jwtService.generateToken(user.getEmail());
+            String token = jwtService.generateToken(user.getUsername());
             User savedUser = userService.findByUsername(user.getUsername()); // Получаем из БД
 
             // 5. Формирование ответа
@@ -97,7 +97,7 @@ public class UserController {
 
             // 2. Получение данных пользователя
             User user = userService.findByUsername(loginRequest.getUsername());
-            String token = jwtService.generateToken(user.getEmail());
+            String token = jwtService.generateToken(user.getUsername());
 
             // 3. Формирование базового ответа
             Map<String, Object> response = new HashMap<>();

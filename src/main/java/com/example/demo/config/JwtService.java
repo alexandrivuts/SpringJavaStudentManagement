@@ -34,9 +34,9 @@ public class JwtService {
     }
 
     // ✅ Генерация токена
-    public String generateToken(String email) {
+    public String generateToken(String username) {
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(secretKey, io.jsonwebtoken.SignatureAlgorithm.HS256)
