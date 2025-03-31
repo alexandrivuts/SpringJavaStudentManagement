@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.ScholarshipReportDto;
 import com.example.demo.dto.TranscriptDto;
 import com.example.demo.model.*;
 import com.example.demo.repository.GradesRepository;
@@ -187,5 +188,25 @@ public class StudentService {
         }
         // Если не найдено соответствие, возвращаем нулевую сумму
         return BigDecimal.ZERO;
+    }
+
+    public List<ScholarshipReportDto> generateScholarshipReport() {
+        List<Student> allStudents = studentRepository.findAll();
+
+        return allStudents.stream()
+                .filter(student -> student.getAverageGrade() != null)
+                .map(student -> {
+                    BigDecimal avgGrade = BigDecimal.valueOf(student.getAverageGrade());
+                    BigDecimal amount = scholarshipAmountService.calculateScholarship(avgGrade.doubleValue());
+
+                    return new ScholarshipReportDto(
+                            student.getUser().getName() + " " + student.getUser().getSurname(),
+                            student.getGroup() != null ? String.valueOf(student.getGroup().getGroupNumber()) : "N/A",
+                            avgGrade,
+                            amount
+                    );
+                })
+                .filter(dto -> dto.getScholarshipAmount().compareTo(BigDecimal.ZERO) > 0) // Только получающие стипендию
+                .collect(Collectors.toList());
     }
 }
