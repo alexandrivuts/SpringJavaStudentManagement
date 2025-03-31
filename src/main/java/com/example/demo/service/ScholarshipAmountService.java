@@ -52,19 +52,16 @@ public class ScholarshipAmountService {
         return scholarshipAmountRepository.findAll();
     }
 
-    // Проверка корректности диапазона
     private boolean isRangeValid(BigDecimal min, BigDecimal max) {
         return min != null && max != null && min.compareTo(max) < 0;
     }
 
-    // Проверка уникальности диапазона
     private boolean isRangeUnique(ScholarshipAmount scholarshipAmount) {
         List<ScholarshipAmount> existingAmounts = scholarshipAmountRepository.findByMinAverageLessThanAndMaxAverageGreaterThanEqual(
                 scholarshipAmount.getMin_average(), scholarshipAmount.getMaxAverage());
         return existingAmounts.isEmpty();
     }
 
-    // Проверка уникальности диапазона для обновления
     private boolean isRangeUniqueForUpdate(ScholarshipAmount scholarshipAmount) {
         List<ScholarshipAmount> existingAmounts = scholarshipAmountRepository.findByMinAverageLessThanAndMaxAverageGreaterThanEqual(
                 scholarshipAmount.getMin_average(), scholarshipAmount.getMaxAverage());
@@ -72,15 +69,14 @@ public class ScholarshipAmountService {
                 .allMatch(existing -> existing.getAmount_id() != scholarshipAmount.getAmount_id());
     }
 
-    // Метод для вычисления стипендии на основе средней оценки
     public BigDecimal calculateScholarship(double averageGrade) {
         List<ScholarshipAmount> scholarshipAmounts = scholarshipAmountRepository.findAll();
 
         for (ScholarshipAmount scholarship : scholarshipAmounts) {
             if (averageGrade >= scholarship.getMin_average().doubleValue() && averageGrade <= scholarship.getMaxAverage().doubleValue()) {
-                return scholarship.getAmount();  // Возвращаем сумму стипендии
+                return scholarship.getAmount();
             }
         }
-        return BigDecimal.ZERO;  // Если не попадает в диапазоны, то стипендии нет
+        return BigDecimal.ZERO;
     }
 }

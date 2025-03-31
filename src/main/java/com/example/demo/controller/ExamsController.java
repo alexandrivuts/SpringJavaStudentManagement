@@ -20,23 +20,21 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/exams")
 public class ExamsController {
     private final StudentService studentService;
-    private final ExamsService examsService;  // Сервис для работы с экзаменами
+    private final ExamsService examsService;
 
     public ExamsController(StudentService studentService, ExamsService examsService) {
         this.studentService = studentService;
         this.examsService = examsService;
     }
 
-    // Получение зачетки студента
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/transcript")
     public ResponseEntity<Map<String, Object>> getMyTranscript(Authentication auth) {
         String username = auth.getName();
         Student student = studentService.findByUsername(username);
 
-        // Получаем зачетку студента
         TranscriptDto transcript = studentService.getTranscript(student.getStudent_id());
 
-        // Преобразуем зачетку в нужный формат
         Map<String, Object> response = new HashMap<>();
         response.put("courseName", transcript.getCourseName());
         response.put("exams", transcript.getExams().stream()
@@ -51,14 +49,11 @@ public class ExamsController {
         return ResponseEntity.ok(response);
     }
 
-    // Получение всех экзаменов (только для ADMIN и ACCOUNTANT)
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_ACCOUNTANT')")
     @GetMapping("/all")
     public ResponseEntity<List<ExamDto>> getAllExams() {
-        // Получаем все экзамены из сервиса
         List<Exams> exams = examsService.getAllExams();
 
-        // Преобразуем список экзаменов в список DTO
         List<ExamDto> examDtos = exams.stream()
                 .map(exam -> {
                     ExamDto dto = new ExamDto();
@@ -68,22 +63,19 @@ public class ExamsController {
                 })
                 .collect(Collectors.toList());
 
-        // Возвращаем список экзаменов в формате DTO
         return ResponseEntity.ok(examDtos);
     }
 
-    // Изменение предмета (только для ADMIN)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/update/{examId}")
     public ResponseEntity<ExamDto> updateExam(@PathVariable int examId, @RequestBody ExamDto examDto) {
         Exams exam = examsService.findById(examId);
 
-        // Обновляем данные экзамена
         exam.setSubject(examDto.getSubject());
         exam.setCourse(examDto.getCourse());
 
-        examsService.update(exam); // Обновление экзамена в базе данных
+        examsService.update(exam);
 
-        return ResponseEntity.ok(examDto); // Возвращаем обновленные данные
+        return ResponseEntity.ok(examDto);
     }
 }

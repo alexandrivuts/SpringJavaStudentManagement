@@ -9,7 +9,6 @@ public class ScholarshipAmountDto {
     private BigDecimal maxAverage;
     private BigDecimal amount;
 
-    // Конструкторы, геттеры и сеттеры
     public ScholarshipAmountDto() {}
 
     public ScholarshipAmountDto(int amountId, BigDecimal minAverage, BigDecimal maxAverage, BigDecimal amount) {

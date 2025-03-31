@@ -5,7 +5,6 @@ public class ExamDto {
     private String subject;
     private int course;
 
-    // Геттеры и сеттеры
     public String getSubject() {
         return subject;
     }

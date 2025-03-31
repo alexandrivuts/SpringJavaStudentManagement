@@ -8,7 +8,6 @@ public class ScholarshipReportDto {
     private BigDecimal averageGrade;
     private BigDecimal scholarshipAmount;
 
-    // Конструкторы
     public ScholarshipReportDto() {}
 
     public ScholarshipReportDto(String fullName, String groupNumber,
@@ -19,7 +18,6 @@ public class ScholarshipReportDto {
         this.scholarshipAmount = scholarshipAmount;
     }
 
-    // Геттеры и сеттеры
     public String getFullName() {
         return fullName;
     }

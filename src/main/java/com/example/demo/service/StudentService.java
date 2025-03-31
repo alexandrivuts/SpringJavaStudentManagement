@@ -21,21 +21,18 @@ public class StudentService {
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final GradesRepository gradesRepository;
-    private final GradesService gradesService;
     private final ExamsService examsService;
-    private final ScholarshipAmountService scholarshipAmountService;  // Сервис для стипендий
+    private final ScholarshipAmountService scholarshipAmountService;
 
     @Autowired
-    public StudentService(UserRepository userRepository, StudentRepository studentRepository, GradesRepository gradesRepository, GradesService gradesService, ExamsService examsService, ScholarshipAmountService scholarshipAmountService) {
+    public StudentService(UserRepository userRepository, StudentRepository studentRepository, GradesRepository gradesRepository, ExamsService examsService, ScholarshipAmountService scholarshipAmountService) {
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.gradesRepository = gradesRepository;
-        this.gradesService = gradesService;
         this.examsService = examsService;
-        this.scholarshipAmountService = scholarshipAmountService;  // Инициализация сервиса стипендий
+        this.scholarshipAmountService = scholarshipAmountService;
     }
 
-    // Вставка нового студента
     public void insert(Student student) {
         if (student.getUser() == null) {
             throw new IllegalArgumentException("Студент должен быть связан с пользователем.");
@@ -43,7 +40,6 @@ public class StudentService {
         studentRepository.save(student);
     }
 
-    // Обновление данных студента
     public void update(Student student) {
         if (student.getStudent_id() <= 0) {
             throw new IllegalArgumentException("Некорректный ID студента.");
@@ -51,39 +47,28 @@ public class StudentService {
         studentRepository.save(student);
     }
 
-    // В StudentService
     @Transactional
     public void delete(int studentId) {
-        // 1. Находим студента
         Student student = findById(studentId);
         if (student == null) {
             throw new EntityNotFoundException("Student with ID " + studentId + " not found");
         }
-
-        // 2. Получаем связанного пользователя
         User user = student.getUser();
-
-        // 3. Удаляем сначала студента
         studentRepository.delete(student);
-
-        // 4. Удаляем связанного пользователя
         if (user != null) {
             userRepository.delete(user);
         }
     }
 
-    // Поиск студента по ID
     public Student findById(int studentId) {
         return studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Студент с ID " + studentId + " не найден."));
     }
 
-    // Получение всех студентов
     public List<Student> getAllStudents() {
-        return studentRepository.findAll();  // Получаем всех студентов
+        return studentRepository.findAll();
     }
 
-    // Поиск студентов по ID группы
     public List<Student> findByGroupId(int groupId) {
         List<Student> students = studentRepository.findAll().stream()
                 .filter(student -> student.getGroup() != null && student.getGroup().getGroupId() == groupId)
@@ -94,13 +79,11 @@ public class StudentService {
         return students;
     }
 
-    // Поиск студента по username
     public Student findByUsername(String username) {
         return studentRepository.findByUser_username(username)
                 .orElseThrow(() -> new IllegalArgumentException("Студент с username " + username + " не найден."));
     }
 
-    // Поиск студента по userId
     public Student findByUserId(int userId) {
         return studentRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Студент с user ID " + userId + " не найден."));
@@ -110,26 +93,20 @@ public class StudentService {
         return studentRepository.findByUser_NameAndUser_Surname(firstName, lastName);
     }
 
-    // Получение зачетки студента
     public TranscriptDto getTranscript(int studentId) {
         Student student = findById(studentId);
         TranscriptDto transcriptDto = new TranscriptDto();
 
-        // Заполняем данные о курсе
         if (student.getGroup() != null) {
             transcriptDto.setCourseName(student.getGroup().getFaculty() + " - " + student.getGroup().getSpecialization());
         }
 
-        // Получаем список экзаменов для курса
         List<Exams> exams = getExamsForStudent(student);
-
-        // Преобразуем экзамены и оценки в DTO
         List<TranscriptDto.ExamDto> examDtos = exams.stream()
                 .map(exam -> {
                     TranscriptDto.ExamDto examDto = new TranscriptDto.ExamDto();
                     examDto.setSubject(exam.getSubject());
 
-                    // Ищем оценку для экзамена
                     Grades grade = findGradeForStudent(student, exam);
                     if (grade != null) {
                         examDto.setGrade(grade.getGrade());
@@ -143,26 +120,20 @@ public class StudentService {
         return transcriptDto;
     }
 
-    // Метод для получения экзаменов студента (например, по группе или курсу)
     private List<Exams> getExamsForStudent(Student student) {
-        // Проверяем, есть ли группа у студента
         if (student.getGroup() == null) {
             throw new IllegalArgumentException("У студента нет группы.");
         }
 
-        // Получаем курс студента из его группы
         int studentCourse = student.getGroup().getCourse();
 
-        // Возвращаем список экзаменов, которые относятся к курсу студента
         return examsService.findByCourse(studentCourse);
     }
 
-    // Метод для поиска оценки студента по конкретному экзамену
     private Grades findGradeForStudent(Student student, Exams exam) {
         return gradesRepository.findByStudentAndExams(student, exam);
     }
 
-    // Метод для расчета среднего балла студента
     public double calculateAverageGrade(int studentId) {
         List<Grades> grades = gradesRepository.findByStudent_studentId(studentId);
         if (grades == null || grades.isEmpty()) return 0.0;
@@ -174,11 +145,9 @@ public class StudentService {
                 .orElse(0.0);
     }
 
-    // Метод для получения суммы стипендии на основе среднего балла
     public BigDecimal calculateScholarshipAmount(int studentId) {
         double averageGrade = calculateAverageGrade(studentId);
 
-        // Находим соответствующую сумму стипендии на основе среднего балла
         List<ScholarshipAmount> scholarshipAmounts = scholarshipAmountService.findAll();
         for (ScholarshipAmount scholarshipAmount : scholarshipAmounts) {
             if (averageGrade >= scholarshipAmount.getMin_average().doubleValue()
@@ -186,7 +155,6 @@ public class StudentService {
                 return scholarshipAmount.getAmount();
             }
         }
-        // Если не найдено соответствие, возвращаем нулевую сумму
         return BigDecimal.ZERO;
     }
 

@@ -1,24 +1,19 @@
 package com.example.demo.dto;
 
-/**
- * DTO для отображения профиля студента
- */
 public class StudentProfileDto {
     private String name;
     private String surname;
     private String email;
-    private String phoneNumber;  // Добавлено
-    private String birthday;     // Добавлено
+    private String phoneNumber;
+    private String birthday;
     private int groupNumber;
     private int course;
     private String faculty;
     private String specialization;
     private double averageGrade;
 
-    // Конструктор по умолчанию
     public StudentProfileDto() {}
 
-    // Геттеры
     public String getName() {
         return name != null ? name : "";
     }
@@ -39,14 +34,12 @@ public class StudentProfileDto {
         return birthday != null ? birthday : "";
     }
 
-    // Остальные геттеры без изменений
     public int getGroupNumber() { return groupNumber; }
     public int getCourse() { return course; }
     public String getFaculty() { return faculty != null ? faculty : ""; }
     public String getSpecialization() { return specialization != null ? specialization : ""; }
     public double getAverageGrade() { return averageGrade; }
 
-    // Сеттеры
     public void setName(String name) {
         this.name = name != null ? name.trim() : "";
     }
@@ -67,7 +60,6 @@ public class StudentProfileDto {
         this.birthday = birthday != null ? birthday.trim() : "";
     }
 
-    // Остальные сеттеры без изменений
     public void setGroupNumber(int groupNumber) { this.groupNumber = groupNumber; }
     public void setCourse(int course) { this.course = course; }
     public void setFaculty(String faculty) { this.faculty = faculty != null ? faculty.trim() : ""; }

@@ -14,13 +14,13 @@ public class ScholarshipAmount {
     private int amountId;
 
     @Column(name = "min_average", unique = true)
-    private BigDecimal minAverage; // изменено с Float на BigDecimal
+    private BigDecimal minAverage;
 
     @Column(name = "max_average", unique = true)
-    private BigDecimal maxAverage; // изменено с Float на BigDecimal
+    private BigDecimal maxAverage;
 
     @Column(name = "amount", unique = true)
-    private BigDecimal amount; // изменено с int на BigDecimal
+    private BigDecimal amount;
 
     public int getAmount_id() {
         return amountId;
@@ -53,5 +53,4 @@ public class ScholarshipAmount {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
-
 }

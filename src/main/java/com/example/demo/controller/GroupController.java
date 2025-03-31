@@ -11,21 +11,17 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/groups")
 public class GroupController {
 
-    private final StudentService studentService;
     private final GroupService groupService;
 
-    public GroupController(StudentService studentService, GroupService groupService) {
-        this.studentService = studentService;
+    public GroupController(GroupService groupService) {
         this.groupService = groupService;
     }
 
-    // Добавление группы
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<?> addGroup(@RequestBody Group group) {
@@ -37,7 +33,6 @@ public class GroupController {
         }
     }
 
-    // Удаление группы
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{groupId}")
     public ResponseEntity<?> deleteGroup(@PathVariable int groupId) {
@@ -48,7 +43,7 @@ public class GroupController {
             return ResponseEntity.badRequest().body("Error deleting group: " + e.getMessage());
         }
     }
-    // Получение всех групп
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<List<Group>> getAllGroups() {

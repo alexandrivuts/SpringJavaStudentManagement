@@ -1,17 +1,16 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.StudentProfileDto;
-import com.example.demo.dto.TranscriptDto;
 import com.example.demo.model.Student;
 import com.example.demo.service.StudentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    // 1. Просмотр профиля студента
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/profile")
     public ResponseEntity<Map<String, Object>> getMyProfile(Authentication auth) {
         String username = auth.getName();
@@ -50,7 +49,6 @@ public class StudentController {
         return ResponseEntity.ok(response);
     }
 
-    // 2. Просмотр всех студентов (доступно для всех ролей)
     @GetMapping("/all")
     public ResponseEntity<List<StudentProfileDto>> getAllStudents() {
         List<Student> students = studentService.getAllStudents();
@@ -76,7 +74,6 @@ public class StudentController {
         return ResponseEntity.ok(studentDtos);
     }
 
-    // Поиск студентов по имени и фамилии
     @GetMapping("/search")
     public ResponseEntity<List<StudentProfileDto>> searchStudents(
             @RequestParam(value = "firstName", required = false) String firstName,

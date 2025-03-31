@@ -33,7 +33,6 @@ public class JwtService {
         }
     }
 
-    // ✅ Генерация токена
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -43,27 +42,23 @@ public class JwtService {
                 .compact();
     }
 
-    // ✅ Получение email из токена
     public String extractUsername(String token) {
         return parseClaims(token).getSubject();
     }
 
-    // ✅ Проверка валидности токена
     public boolean isTokenValid(String token, org.springframework.security.core.userdetails.UserDetails userDetails) {
         String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
-    // 🔍 Парсим токен
     private Claims parseClaims(String token) {
         return Jwts.parser()
-                .verifyWith(secretKey)  // используем verifyWith вместо setSigningKey
-                .build()  // нужно вызвать build() перед парсингом
-                .parseSignedClaims(token)  // используем parseSignedClaims вместо parseClaimsJws
-                .getPayload();  // используем getPayload() вместо getBody()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
-    // ✅ Проверка истечения срока действия токена
     private boolean isTokenExpired(String token) {
         return parseClaims(token).getExpiration().before(new Date());
     }

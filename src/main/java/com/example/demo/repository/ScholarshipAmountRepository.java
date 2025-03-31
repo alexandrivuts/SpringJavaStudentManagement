@@ -10,5 +10,4 @@ import java.util.List;
 @Repository
 public interface ScholarshipAmountRepository extends JpaRepository<ScholarshipAmount, Integer> {
     List<ScholarshipAmount> findByMinAverageLessThanAndMaxAverageGreaterThanEqual(BigDecimal minAverage, BigDecimal maxAverage);
-    List<ScholarshipAmount> findByMinAverageGreaterThanEqualAndMaxAverageLessThan(BigDecimal minAverage, BigDecimal maxAverage);
 }

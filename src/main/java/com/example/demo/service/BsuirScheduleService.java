@@ -17,6 +17,4 @@ public class BsuirScheduleService {
         String url = API_URL + "?studentGroup=" + groupNumber;
         return restTemplate.getForObject(url, String.class);
     }
-
-    // Можно добавить методы для парсинга JSON/XML ответа
 }

@@ -11,7 +11,6 @@ public class TranscriptDto {
         private String subject;
         private Float grade;
 
-        // getters and setters
         public String getSubject() {
             return subject;
         }
@@ -29,7 +28,6 @@ public class TranscriptDto {
         }
     }
 
-    // getters and setters
     public String getCourseName() {
         return courseName;
     }

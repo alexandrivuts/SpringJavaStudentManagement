@@ -31,19 +31,16 @@ public class GradesController {
         this.gradesRepository = gradesRepository;
     }
 
-    // Получение среднего балла и суммы стипендии студента
     @GetMapping("/scholarship")
+    @PreAuthorize("hasRole('ROLE_ACCOUNTANT')")
     public ResponseEntity<Map<String, Object>> getAverageGradeAndScholarship(Authentication auth) {
         String username = auth.getName();
         Student student = studentService.findByUsername(username);
 
-        // Получаем средний балл студента
         double averageGrade = studentService.calculateAverageGrade(student.getStudent_id());
 
-        // Получаем сумму стипендии на основе среднего балла
         BigDecimal scholarshipAmount = studentService.calculateScholarshipAmount(student.getStudent_id());
 
-        // Возвращаем средний балл и сумму стипендии
         Map<String, Object> response = new HashMap<>();
         response.put("averageGrade", averageGrade);
         response.put("scholarshipAmount", scholarshipAmount);
@@ -57,7 +54,6 @@ public class GradesController {
         try {
             System.out.println("Запрос на добавление оценок получен: " + requestData);
 
-            // 1. Получаем данные из запроса
             int studentId = (Integer) requestData.get("studentId");
             Map<Long, Float> examGrades = new HashMap<>();
             ((Map<String, Object>) requestData.get("examGrades")).forEach((key, value) ->
@@ -66,7 +62,6 @@ public class GradesController {
             System.out.println("studentId: " + studentId);
             System.out.println("examGrades: " + examGrades);
 
-            // 2. Находим студента
             Student student = studentService.findById(studentId);
             if (student == null) {
                 System.out.println("Студент не найден!");
@@ -75,7 +70,6 @@ public class GradesController {
 
             System.out.println("Студент найден: " + student.getStudent_id());
 
-            // 3. Получаем группу студента и его курс
             Group group = student.getGroup();
             if (group == null) {
                 System.out.println("Группа не найдена!");
@@ -84,29 +78,23 @@ public class GradesController {
 
             System.out.println("Группа найдена: " + group.getCourse());
 
-            // 4. Получаем экзамены для этого курса
             List<Exams> exams = examsService.findByCourse(group.getCourse());
             System.out.println("Найдено экзаменов: " + exams.size());
 
-            // 5. Создаем записи в Grades
             for (Map.Entry<Long, Float> entry : examGrades.entrySet()) {
                 Long examIdLong = entry.getKey();
                 Float grade = entry.getValue();
 
-                // Преобразуем Long в int
                 int examId = examIdLong.intValue();
 
-                // Получаем экзамен
                 Exams exam = examsService.findById(examId);
                 if (exam == null) {
                     System.out.println("Экзамен с ID " + examId + " не найден!");
                     continue;
                 }
 
-                // Поиск существующей записи оценки
                 Grades existingGrade = gradesRepository.findByStudentAndExams(student, exam);
 
-                // Если запись существует, обновляем ее. Если нет — создаем новую
                 if (existingGrade != null) {
                     existingGrade.setGrade(grade);
                     gradesRepository.save(existingGrade);
@@ -121,7 +109,6 @@ public class GradesController {
                 System.out.println("✅ Оценка для экзамена " + examId + " обновлена или добавлена.");
             }
 
-            // 6. Расчет среднего балла студента
             List<Grades> studentGrades = gradesRepository.findByStudent_studentId(studentId);
             if (studentGrades.isEmpty()) {
                 System.out.println("Нет оценок для студента!");
@@ -134,8 +121,8 @@ public class GradesController {
             }
 
             Double averageGrade = totalGrade / studentGrades.size();
-            student.setAverageGrade(averageGrade);  // предполагаем, что в Student есть поле averageGrade
-            studentService.update(student);  // Обновляем данные студента с новым средним баллом
+            student.setAverageGrade(averageGrade);
+            studentService.update(student);
 
             System.out.println("Средний балл студента обновлен: " + averageGrade);
 
@@ -145,5 +132,4 @@ public class GradesController {
             return ResponseEntity.badRequest().body("Error adding grades: " + e.getMessage());
         }
     }
-
 }
