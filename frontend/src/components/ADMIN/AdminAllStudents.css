@@ -1,0 +1,154 @@
+.admin-students-container {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.admin-students-content {
+    display: flex;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.admin-students-main {
+    flex: 1;
+    margin-left: 25px;
+}
+
+.students-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+}
+
+.students-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.students-header h2 {
+    margin: 0;
+    color: #1a3353;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 300px;
+    font-size: 14px;
+}
+
+.clear-search-button {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #999;
+}
+
+.students-list {
+    margin-top: 20px;
+}
+
+.list-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    font-weight: 500;
+    color: #666;
+}
+
+.student-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+}
+
+.student-name {
+    font-weight: 500;
+}
+
+.has-grade {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.no-grade {
+    color: #6c757d;
+}
+
+.no-results {
+    padding: 30px;
+    text-align: center;
+    color: #6c757d;
+    font-size: 16px;
+}
+
+.loading, .error {
+    padding: 40px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.loading {
+    color: #666;
+}
+
+.error {
+    color: #d9534f;
+}
+
+@media (max-width: 992px) {
+    .admin-students-content {
+        flex-direction: column;
+    }
+
+    .admin-students-main {
+        margin-left: 0;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-students-content {
+        padding: 15px;
+    }
+
+    .students-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    .list-header, .student-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .students-header h2 {
+        font-size: 24px;
+    }
+}

@@ -22,6 +22,7 @@ const LoginForm = () => {
 
             localStorage.setItem('token', token);
             localStorage.setItem('role', roleName);
+            localStorage.setItem('username', user.name+" "+user.surname); // Добавьте эту строку
 
             // Навигация по роли
             if (roleName === 'ADMIN') {

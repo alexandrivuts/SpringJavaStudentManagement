@@ -39,7 +39,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/users/register",
                                 "/api/users/login",
-                                "/error"
+                                "/error",
+                                "/api/schedule/group/**"
                         ).permitAll()
                         .requestMatchers("/api/exams/all").hasAnyRole("ADMIN", "ACCOUNTANT")
                         .anyRequest().authenticated()

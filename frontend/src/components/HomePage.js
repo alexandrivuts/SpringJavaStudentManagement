@@ -8,6 +8,12 @@ const HomePage = () => {
     const handleLoginRedirect = () => {
         navigate('/login');
     };
+    const handleScheduleRedirect = () => {
+        navigate('/schedule');
+
+    };const handlePhoneRedirect = () => {
+        navigate('/phone');
+    };
 
     return (
         <div className="home-page">
@@ -30,7 +36,7 @@ const HomePage = () => {
                     </section>
 
                     <div className="services-grid">
-                        <div className="service-card">
+                        <div className="service-card" onClick={handleScheduleRedirect} style={{cursor: 'pointer'}}>
                             <h3>Расписание</h3>
                             <p>Расписание преподавателей и студентов БГУИР</p>
                         </div>
@@ -40,7 +46,7 @@ const HomePage = () => {
                             <p>Переход ко входу в личный кабинет</p>
                         </div>
 
-                        <div className="service-card">
+                        <div className="service-card" onClick={handlePhoneRedirect} style={{cursor: 'pointer'}}>
                             <h3>Телефонный справочник</h3>
                             <p>Контактные данные сотрудников университета</p>
                         </div>

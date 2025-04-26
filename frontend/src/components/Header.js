@@ -4,24 +4,49 @@ import { FaUserCircle } from 'react-icons/fa';
 import { IoIosArrowDown } from 'react-icons/io';
 import './Header.css';
 
-const Header = ({ studentData }) => {
+const Header = () => {
     const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+    // Получаем данные из localStorage
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role'); // 'ADMIN', 'ACCOUNTANT' или 'USER'
+    const username = localStorage.getItem('username'); // Добавьте сохранение username при логине
+
     const handleLogout = () => {
         localStorage.removeItem('token');
-        navigate('/');
+        localStorage.removeItem('role');
+        localStorage.removeItem('username');
+        navigate('/login');
         setIsDropdownOpen(false);
     };
 
     const handleNavigateProfile = () => {
-        navigate('/profile');
+        if (role === 'ADMIN') {
+            navigate('/admin');
+        } else if (role === 'ACCOUNTANT') {
+            navigate('/accountant');
+        } else {
+            navigate('/profile');
+        }
+        setIsDropdownOpen(false);
+    };
+
+    const handleNavigateAdminPanel = () => {
+        navigate('/admin');
+        setIsDropdownOpen(false);
+    };
+
+    const handleNavigateAccountantPanel = () => {
+        navigate('/accountant');
         setIsDropdownOpen(false);
     };
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
+
+    if (!token) return null; // Не показываем хедер если пользователь не авторизован
 
     return (
         <div className="profile-header">
@@ -30,18 +55,30 @@ const Header = ({ studentData }) => {
             <div className="user-menu">
                 <button className="user-button" onClick={toggleDropdown}>
                     <FaUserCircle className="user-icon" />
-                    <IoIosArrowDown className="arrow-icon" />
+                    <span className="user-name-short">
+                        {username || 'Пользователь'}
+                    </span>
+                    <IoIosArrowDown className={`arrow-icon ${isDropdownOpen ? 'open' : ''}`} />
                 </button>
+
                 {isDropdownOpen && (
                     <div className="user-dropdown">
-                        {studentData && (
-                            <div className="user-name">
-                                {studentData.surname} {studentData.name}
+                        <div className="user-info">
+                            <div className="user-fullname">
+                                {username || 'Пользователь'}
                             </div>
-                        )}
+                            <div className="user-role">
+                                {role === 'ADMIN' && 'Администратор'}
+                                {role === 'ACCOUNTANT' && 'Бухгалтер'}
+                                {role === 'USER' && 'Студент'}
+                            </div>
+                        </div>
+
                         <button className="dropdown-item" onClick={handleNavigateProfile}>
-                            Личный кабинет
+                            {role === 'ADMIN' ? 'Личный кабинет' :
+                                role === 'ACCOUNTANT' ? 'Личный кабинет' : 'Личный кабинет'}
                         </button>
+
                         <button className="dropdown-item logout" onClick={handleLogout}>
                             Выйти
                         </button>

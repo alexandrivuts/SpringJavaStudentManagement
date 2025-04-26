@@ -5,63 +5,55 @@ import StudentSidebar from './StudentSidebar';
 import './Scholarship.css';
 
 const Scholarship = () => {
-    const [studentData, setStudentData] = useState(null);
-    const [transcript, setTranscript] = useState(null);
+    const [scholarshipData, setScholarshipData] = useState({
+        averageGrade: null,
+        scholarshipAmount: 0
+    });
+    const [transcriptData, setTranscriptData] = useState({
+        courseName: '',
+        exams: []
+    });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [activeSection, setActiveSection] = useState('scholarship');
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const token = localStorage.getItem('token');
+    const fetchData = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) throw new Error('Требуется авторизация');
 
-                // Загружаем данные студента (где есть averageGrade)
-                const studentResponse = await axios.get('http://localhost:8080/api/student/profile', {
+            const [scholarshipRes, transcriptRes] = await Promise.all([
+                axios.get('http://localhost:8080/api/grades/scholarship', {
                     headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                // Загружаем транскрипт с оценками
-                const transcriptResponse = await axios.get('http://localhost:8080/api/exams/transcript', {
+                }),
+                axios.get('http://localhost:8080/api/exams/transcript', {
                     headers: { 'Authorization': `Bearer ${token}` }
-                });
+                })
+            ]);
 
-                setStudentData(studentResponse.data);
-                setTranscript(transcriptResponse.data);
-                setLoading(false);
-            } catch (err) {
-                setError('Ошибка загрузки данных для расчета стипендии');
-                setLoading(false);
-                console.error('Ошибка:', err);
-            }
-        };
+            setScholarshipData({
+                averageGrade: scholarshipRes.data.averageGrade,
+                scholarshipAmount: scholarshipRes.data.scholarshipAmount
+            });
 
-        fetchData();
-    }, []);
+            setTranscriptData({
+                courseName: transcriptRes.data.courseName,
+                exams: transcriptRes.data.exams
+            });
 
-    // Функция расчета стипендии
-    const calculateScholarship = () => {
-        if (!studentData || !studentData.averageGrade || !transcript || !transcript.exams) {
-            return { amount: 0, status: 'Недостаточно данных' };
+            setLoading(false);
+        } catch (err) {
+            console.error('Ошибка загрузки:', err);
+            setError(err.response?.data?.message ||
+                err.message ||
+                'Ошибка загрузки данных');
+            setLoading(false);
         }
-
-        const hasLowGrades = transcript.exams.some(exam => exam.grade < 4);
-        const averageGrade = studentData.averageGrade;
-
-        if (hasLowGrades) {
-            return { amount: 0, status: 'Не получает (есть оценки ниже 4)' };
-        }
-
-        if (averageGrade >= 4.5) {
-            return { amount: 120, status: 'Повышенная стипендия' };
-        } else if (averageGrade >= 4) {
-            return { amount: 80, status: 'Базовая стипендия' };
-        }
-
-        return { amount: 0, status: 'Не получает' };
     };
 
-    const scholarship = calculateScholarship();
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     if (loading) return <div className="loading">Загрузка данных...</div>;
     if (error) return <div className="error">{error}</div>;
@@ -69,40 +61,37 @@ const Scholarship = () => {
     return (
         <div className="page-container">
             <Header />
-
             <div className="content-container">
                 <StudentSidebar activeSection={activeSection} setActiveSection={setActiveSection} />
 
                 <div className="scholarship-container">
                     <h2>Моя стипендия</h2>
 
-                    <div className="scholarship-card">
-                        <div className="scholarship-amount">
-                            <span className="amount">{scholarship.amount}</span>
-                            <span className="currency">руб.</span>
+                    <div className="scholarship-info">
+                        <div className="scholarship-card">
+                            <div className="amount">{scholarshipData.scholarshipAmount} руб.</div>
+                            <div className="average-grade">
+                                Средний балл: <strong>{scholarshipData.averageGrade?.toFixed(2)}</strong>
+                            </div>
                         </div>
-                        <div className={`scholarship-status ${scholarship.amount > 0 ? 'active' : 'inactive'}`}>
-                            {scholarship.status}
+
+                        <div className="course-info">
+                            Направление: <strong>{transcriptData.courseName}</strong>
                         </div>
                     </div>
 
-                    <div className="grades-info">
-                        <h3>Основание для расчета:</h3>
-                        <p>Средний балл: <strong>{studentData.averageGrade || '—'}</strong></p>
-
-                        {transcript && transcript.exams && (
-                            <div className="grades-list">
-                                <h4>Ваши оценки:</h4>
-                                <ul>
-                                    {transcript.exams.map((exam, index) => (
-                                        <li key={index} className={`grade-item grade-${exam.grade}`}>
-                                            <span className="subject">{exam.subject}</span>
-                                            <span className="grade">{exam.grade}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
+                    <div className="exams-section">
+                        <h3>Экзамены</h3>
+                        <div className="exams-grid">
+                            {transcriptData.exams.map((exam, index) => (
+                                <div key={index} className={`exam-card grade-${Math.floor(exam.grade)}`}>
+                                    <div className="exam-header">
+                                        <span className="subject">{exam.subject}</span>
+                                        <span className="grade">{exam.grade}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>

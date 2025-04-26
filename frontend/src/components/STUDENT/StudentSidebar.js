@@ -10,7 +10,7 @@ const StudentSidebar = ({ activeSection, setActiveSection }) => {
         { id: 'students', label: 'Все студенты', navigate: () => navigate('/student/all') },
         { id: 'scholarship', label: 'Стипендия', navigate: () => navigate('/scholarship') },
         { id: 'group', label: 'Группа', navigate: () => navigate('/group') },
-        { id: 'schedule', label: 'Расписание', navigate: () => navigate('/schedule') }
+        { id: 'schedule', label: 'Расписание', navigate: () => navigate('/my-schedule') }
     ];
 
     return (

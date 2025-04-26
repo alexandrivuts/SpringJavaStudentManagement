@@ -1,161 +1,129 @@
-.page-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: #f5f5f5;
-}
-
-.content-container {
-    display: flex;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-}
-
 .scholarship-container {
-    flex: 1;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 25px;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
-.scholarship-container h2 {
-    color: #1a3353;
-    margin-bottom: 20px;
-    font-size: 24px;
+.scholarship-info {
+    margin-bottom: 30px;
 }
 
 .scholarship-card {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    background: #ffffff;
     border-radius: 10px;
     padding: 25px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
-    border: 1px solid #dee2e6;
 }
 
-.scholarship-amount {
+.scholarship-card .amount {
     font-size: 2.5rem;
-    font-weight: 700;
-    color: #1a3353;
+    font-weight: bold;
+    color: #27ae60;
     margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
 }
 
-.scholarship-amount .currency {
-    font-size: 1.5rem;
-    font-weight: 500;
-}
-
-.scholarship-status {
+.scholarship-card .average-grade {
     font-size: 1.2rem;
-    font-weight: 500;
-    padding: 8px 15px;
-    border-radius: 20px;
-    display: inline-block;
+    color: #2c3e50;
 }
 
-.scholarship-status.active {
-    background-color: #d4edda;
-    color: #155724;
+.scholarship-card .average-grade strong {
+    color: #27ae60;
+    font-size: 1.4rem;
 }
 
-.scholarship-status.inactive {
-    background-color: #f8d7da;
-    color: #721c24;
+.course-info {
+    font-size: 1.1rem;
+    color: #555;
+    text-align: center;
 }
 
-.grades-info {
+.course-info strong {
+    color: #2c3e50;
+}
+
+.exams-section {
     margin-top: 30px;
 }
 
-.grades-info h3 {
-    color: #1a3353;
-    margin-bottom: 15px;
-    font-size: 18px;
+.exams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
 }
 
-.grades-info p {
-    margin-bottom: 20px;
-    font-size: 16px;
+.exam-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
 }
 
-.grades-list {
-    margin-top: 20px;
+.exam-card:hover {
+    transform: translateY(-3px);
 }
 
-.grades-list h4 {
-    color: #1a3353;
-    margin-bottom: 15px;
-    font-size: 16px;
-}
-
-.grades-list ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.grade-item {
+.exam-header {
     display: flex;
     justify-content: space-between;
-    padding: 10px 15px;
-    margin-bottom: 8px;
-    border-radius: 5px;
-    background-color: #f8f9fa;
+    align-items: center;
 }
 
-.grade-item .subject {
-    font-weight: 500;
+.subject {
+    font-weight: bold;
+    color: #2c3e50;
 }
 
-.grade-item .grade {
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 3px;
+.grade {
+    font-weight: bold;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.grade-5 {
-    background-color: #e6f7e6;
+.grade-9, .grade-10 {
+    background-color: #e8f5e9;
     color: #2e7d32;
 }
 
-.grade-4 {
-    background-color: #fff8e6;
-    color: #f57f17;
+.grade-7, .grade-8 {
+    background-color: #e3f2fd;
+    color: #1565c0;
 }
 
-.grade-3 {
+.grade-5, .grade-6 {
+    background-color: #fff3e0;
+    color: #e65100;
+}
+
+.grade-4 {
     background-color: #ffebee;
     color: #c62828;
 }
 
 .loading, .error {
-    padding: 30px;
     text-align: center;
-    font-size: 16px;
+    padding: 50px;
+    font-size: 1.2rem;
 }
 
 .error {
-    color: #d9534f;
+    color: #e74c3c;
 }
 
 @media (max-width: 768px) {
-    .content-container {
-        flex-direction: column;
-        padding: 15px;
+    .exams-grid {
+        grid-template-columns: 1fr;
     }
 
-    .scholarship-amount {
+    .scholarship-card .amount {
         font-size: 2rem;
-    }
-
-    .scholarship-status {
-        font-size: 1rem;
     }
 }
