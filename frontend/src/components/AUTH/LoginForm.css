@@ -1,0 +1,132 @@
+/* Обнуление */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', 'Arial', sans-serif;
+    background-color: #f0f3f8;
+}
+
+/* Хедер */
+.bguiir-header {
+    background: #fff;
+    padding: 20px 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bguiir-header h1 {
+    margin: 0;
+    color: #2f4f8b;
+    font-size: 20px;
+}
+
+/* Обертка логина */
+.bguiir-login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px);
+    padding: 20px;
+}
+
+/* Карточка */
+.bguiir-login-card {
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Аватарка */
+.bguiir-login-avatar {
+    background-color: #5a77a8;
+    color: #fff;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Заголовок */
+.bguiir-login-title {
+    margin-top: 50px;
+    margin-bottom: 30px;
+    color: #333;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+/* Форма */
+.bguiir-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Поля формы */
+.bguiir-form-group {
+    position: relative;
+}
+
+.bguiir-form-group i {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+.bguiir-form-group input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* Ошибка */
+.bguiir-error {
+    color: #d32f2f;
+    font-size: 14px;
+}
+
+/* Кнопка */
+.bguiir-login-button {
+    background-color: #5a77a8;
+    color: #fff;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.bguiir-login-button:hover {
+    background-color: #4a6592;
+}
+
+/* Ссылка забыли пароль */
+.bguiir-forgot-password {
+    margin-top: 15px;
+}
+
+.bguiir-forgot-password a {
+    color: #2f4f8b;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.bguiir-forgot-password a:hover {
+    text-decoration: underline;
+}

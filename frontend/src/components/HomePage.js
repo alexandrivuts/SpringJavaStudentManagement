@@ -1,0 +1,69 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './HomePage.css';
+
+const HomePage = () => {
+    const navigate = useNavigate();
+
+    const handleLoginRedirect = () => {
+        navigate('/login');
+    };
+
+    return (
+        <div className="home-page">
+            {/* Хедер на всю ширину */}
+            <header className="full-width-header">
+                <div className="header-content">
+                    <h1 className="header-title">ИИС «БГУИР: Университет»</h1>
+                    <button className="login-button" onClick={handleLoginRedirect}>Войти</button>
+                </div>
+            </header>
+
+            <div className="main-container">
+                <div className="main-content">
+                    <section className="intro-section">
+                        <h2>Интегрированная информационная система «БГУИР: Университет»</h2>
+                        <p>
+                            С более подробной информацией об автоматизированных системах, функционирующих в рамках ИИС «БГУИР: Университет» можно ознакомиться по следующей{' '}
+                            <a href="#" className="info-link">ссылке</a>.
+                        </p>
+                    </section>
+
+                    <div className="services-grid">
+                        <div className="service-card">
+                            <h3>Расписание</h3>
+                            <p>Расписание преподавателей и студентов БГУИР</p>
+                        </div>
+
+                        <div className="service-card" onClick={handleLoginRedirect} style={{cursor: 'pointer'}}>
+                            <h3>Личный кабинет</h3>
+                            <p>Переход ко входу в личный кабинет</p>
+                        </div>
+
+                        <div className="service-card">
+                            <h3>Телефонный справочник</h3>
+                            <p>Контактные данные сотрудников университета</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Футер */}
+            <footer className="full-width-footer">
+                <div className="footer-content">
+                    <div className="university-info">
+                        <p>УО "Белорусский государственный университет информатики и радиоэлектроники"</p>
+                        <p>+375 (17) 293-22-22</p>
+                        <p>Техподдержка</p>
+                    </div>
+                    <div className="legal-info">
+                        <p>УНП: 100363845</p>
+                        <p>© 2009-2025 ОИТ ЦИИР БГУИР. Все права защищены.</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    );
+};
+
+export default HomePage;
