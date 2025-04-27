@@ -11,6 +11,7 @@ public class StudentProfileDto {
     private String faculty;
     private String specialization;
     private double averageGrade;
+    private int studentId;  // Добавляем поле для studentId
 
     public StudentProfileDto() {}
 
@@ -40,6 +41,11 @@ public class StudentProfileDto {
     public String getSpecialization() { return specialization != null ? specialization : ""; }
     public double getAverageGrade() { return averageGrade; }
 
+    // Добавленный getter для studentId
+    public int getStudentId() {
+        return studentId;
+    }
+
     public void setName(String name) {
         this.name = name != null ? name.trim() : "";
     }
@@ -65,4 +71,9 @@ public class StudentProfileDto {
     public void setFaculty(String faculty) { this.faculty = faculty != null ? faculty.trim() : ""; }
     public void setSpecialization(String specialization) { this.specialization = specialization != null ? specialization.trim() : ""; }
     public void setAverageGrade(double averageGrade) { this.averageGrade = averageGrade; }
+
+    // Добавленный setter для studentId
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
+    }
 }

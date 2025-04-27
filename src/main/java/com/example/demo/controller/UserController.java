@@ -6,6 +6,7 @@ import com.example.demo.model.User;
 import com.example.demo.service.StudentService;
 import com.example.demo.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -197,9 +198,14 @@ public class UserController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            // Возвращаем более точную ошибку для случая с внешними ключами
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Cannot delete student with ID " + id + " because there are dependent records.");
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body("Error while deleting: " + e.getMessage());
         }
     }
+
 }

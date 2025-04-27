@@ -1,0 +1,116 @@
+.admin-students-container {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.admin-students-content {
+    display: flex;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.admin-students-main {
+    flex: 1;
+    margin-left: 25px;
+}
+
+.add-session-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.add-session-card h2 {
+    margin: 0;
+    color: #1a3353;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 16px;
+    color: #333;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.exam-list {
+    margin-top: 20px;
+}
+
+.exam-item {
+    margin-bottom: 15px;
+}
+
+.exam-item label {
+    display: block;
+    font-size: 16px;
+}
+
+.exam-item input {
+    width: 100px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.submit-button {
+    background-color: #1a3353;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+}
+
+.submit-button:hover {
+    background-color: #0d1f3d;
+}
+
+.loading, .error {
+    padding: 40px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.loading {
+    color: #666;
+}
+
+.error {
+    color: #d9534f;
+}
+
+@media (max-width: 768px) {
+    .admin-students-content {
+        padding: 15px;
+    }
+
+    .add-session-card {
+        padding: 20px;
+    }
+
+    .submit-button {
+        width: 100%;
+    }
+}

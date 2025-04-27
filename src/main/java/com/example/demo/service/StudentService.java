@@ -53,12 +53,23 @@ public class StudentService {
         if (student == null) {
             throw new EntityNotFoundException("Student with ID " + studentId + " not found");
         }
+
+        // Удаляем все оценки, связанные с этим студентом
+        List<Grades> grades = gradesRepository.findByStudent_studentId(studentId);
+        if (!grades.isEmpty()) {
+            gradesRepository.deleteAll(grades);
+        }
+
+        // Если студент связан с другими сущностями (например, экзаменами), обработаем их
+        // При необходимости добавьте сюда удаление других зависимостей, например, для экзаменов или стипендий.
+
         User user = student.getUser();
         studentRepository.delete(student);
         if (user != null) {
             userRepository.delete(user);
         }
     }
+
 
     public Student findById(int studentId) {
         return studentRepository.findById(studentId)

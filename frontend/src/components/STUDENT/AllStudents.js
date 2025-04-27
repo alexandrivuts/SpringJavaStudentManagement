@@ -5,8 +5,8 @@ import StudentSidebar from './StudentSidebar';
 import './AllStudents.css';
 
 const AllStudents = () => {
-    const [allStudents, setAllStudents] = useState([]); // Все студенты
-    const [filteredStudents, setFilteredStudents] = useState([]); // Отфильтрованные студенты
+    const [allStudents, setAllStudents] = useState([]);
+    const [filteredStudents, setFilteredStudents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -78,35 +78,36 @@ const AllStudents = () => {
                     </div>
 
                     <div className="students-list">
-                        <div className="students-header">
-                            <span className="header-name">ФИО</span>
-                            <span className="header-group">Группа</span>
-                            <span className="header-course">Курс</span>
-                            <span className="header-grade">Средний балл</span>
-                        </div>
-
-                        {filteredStudents.length > 0 ? (
-                            filteredStudents.map((student, index) => (
-                                <div key={index} className="student-row">
-                                    <span className="student-name">
-                                        {student.surname} {student.name}
-                                    </span>
-                                    <span className="student-group">
-                                        {student.groupNumber || '-'}
-                                    </span>
-                                    <span className="student-course">
-                                        {student.course || '-'}
-                                    </span>
-                                    <span className={`student-grade ${student.averageGrade ? 'has-grade' : 'no-grade'}`}>
-                                        {student.averageGrade || '-'}
-                                    </span>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="no-results">
-                                Студенты не найдены
-                            </div>
-                        )}
+                        <table className="students-table">
+                            <thead>
+                            <tr>
+                                <th>ФИО</th>
+                                <th>Группа</th>
+                                <th>Курс</th>
+                                <th>Средний балл</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {filteredStudents.length > 0 ? (
+                                filteredStudents.map((student, index) => (
+                                    <tr key={index}>
+                                        <td>{student.surname} {student.name}</td>
+                                        <td>{student.groupNumber || '-'}</td>
+                                        <td>{student.course || '-'}</td>
+                                        <td className={`student-grade ${student.averageGrade ? 'has-grade' : 'no-grade'}`}>
+                                            {student.averageGrade || '-'}
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="4" className="no-results">
+                                        Студенты не найдены
+                                    </td>
+                                </tr>
+                            )}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

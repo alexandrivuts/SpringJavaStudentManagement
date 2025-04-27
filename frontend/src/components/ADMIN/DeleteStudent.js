@@ -5,159 +5,200 @@ import Header from '../Header';
 import AdminSidebar from './AdminSidebar';
 import './DeleteStudent.css';
 
-const AdminDeleteStudent = () => {
+const DeleteStudent = () => {
     const navigate = useNavigate();
-    const [students, setStudents] = useState([]);
-    const [selectedId, setSelectedId] = useState(null);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false);
+    const [allStudents, setAllStudents] = useState([]);
+    const [filteredStudents, setFilteredStudents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeSection, setActiveSection] = useState('delete-student');
+    const [selectedStudents, setSelectedStudents] = useState([]);
 
     useEffect(() => {
         const fetchStudents = async () => {
             try {
                 const token = localStorage.getItem('token');
                 const response = await axios.get('http://localhost:8080/api/student/all', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-                setStudents(response.data);
+
+                console.log('Ответ API:', response.data);
+
+                setAllStudents(response.data);
+                setFilteredStudents(response.data);
+                setLoading(false);
             } catch (err) {
                 setError('Ошибка загрузки списка студентов');
-                console.error('Ошибка загрузки:', err);
-                if (err.response?.status === 401 || err.response?.status === 403) {
+                setLoading(false);
+                console.error('Ошибка:', err);
+                if (err.response?.status === 403) {
                     navigate('/login');
                 }
-            } finally {
-                setLoading(false);
             }
         };
+
         fetchStudents();
     }, [navigate]);
 
-    const handleDelete = async () => {
-        if (!selectedId) {
-            setError('Выберите студента для удаления');
-            return;
+    useEffect(() => {
+        if (searchQuery.trim() === '') {
+            setFilteredStudents(allStudents);
+        } else {
+            const query = searchQuery.toLowerCase();
+            const filtered = allStudents.filter(student => {
+                const fullName = `${student.surname} ${student.name}`.toLowerCase();
+                return fullName.includes(query);
+            });
+            setFilteredStudents(filtered);
         }
+    }, [searchQuery, allStudents]);
 
-        const student = students.find(s => s.id === selectedId);
-        if (!student) {
-            setError('Студент не найден');
-            return;
-        }
+    const handleSelectStudent = (studentId) => {
+        setSelectedStudents((prevSelected) => {
+            if (prevSelected.includes(studentId)) {
+                return prevSelected.filter((id) => id !== studentId);
+            }
 
-        if (!window.confirm(`Удалить студента ${student.surname} ${student.name}?`)) {
-            return;
-        }
+            return [...prevSelected, studentId];
+        });
+    };
 
+    const handleDeleteSelected = async () => {
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:8080/api/users/delete-student/${selectedId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+            if (!token) {
+                alert('Необходима авторизация');
+                return;
+            }
 
-            setSuccess(true);
-            setStudents(prev => prev.filter(s => s.id !== selectedId));
-            setSelectedId(null);
-            setTimeout(() => setSuccess(false), 3000);
+            console.log('Список выбранных студентов перед удалением:', selectedStudents);
+
+            if (selectedStudents.length === 0) {
+                alert('Выберите хотя бы одного студента для удаления');
+                return;
+            }
+
+            const validStudentIds = selectedStudents.filter(id => id !== undefined && id !== null);
+            console.log('Проверенные ID студентов:', validStudentIds);
+
+            if (validStudentIds.length === 0) {
+                alert('Невозможно удалить студентов, ID не найдены');
+                return;
+            }
+
+            // Логируем токен и отправляем запросы
+            console.log('Токен для авторизации:', token);
+
+            await Promise.all(
+                validStudentIds.map((studentId) => {
+                    console.log(`Отправка запроса на удаление студента с ID: ${studentId}`);
+                    return axios.delete(`http://localhost:8080/api/users/delete-student/${studentId}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                })
+            );
+
+            setSelectedStudents([]);
+            setFilteredStudents((prev) =>
+                prev.filter((student) => !validStudentIds.includes(student.studentId)) // Используем studentId
+            );
+            alert('Выбранные студенты успешно удалены');
         } catch (err) {
-            console.error('Ошибка удаления:', {
-                status: err.response?.status,
-                data: err.response?.data,
-                message: err.message
-            });
-            setError(err.response?.data?.message || 'Ошибка при удалении');
+            console.error('Ошибка удаления студентов:', err);
+            if (err.response) {
+                // Логируем ответ ошибки
+                console.error('Ответ ошибки от сервера:', err.response);
+            }
+            alert('Ошибка удаления студентов');
         }
     };
 
-    const filteredStudents = students.filter(student => {
-        const searchTerm = searchQuery.toLowerCase();
-        return (
-            student.surname.toLowerCase().includes(searchTerm) ||
-            student.name.toLowerCase().includes(searchTerm)
-        );
-    });
+    if (loading) return <div className="loading">Загрузка данных...</div>;
+    if (error) return <div className="error">{error}</div>;
 
     return (
-        <div className="admin-delete-page">
+        <div className="admin-students-container">
             <Header />
 
-            <div className="admin-container">
-                <AdminSidebar activeSection="delete-student" />
+            <div className="admin-students-content">
+                <AdminSidebar activeSection={activeSection} setActiveSection={setActiveSection} />
 
-                <div className="content-wrapper">
-                    <div className="delete-student-card">
-                        <h2>Удалить студента</h2>
-
-                        {success && (
-                            <div className="alert success">
-                                Студент успешно удален!
+                <div className="admin-students-main">
+                    <div className="students-card">
+                        <div className="students-header">
+                            <h2>Все студенты</h2>
+                            <div className="search-container">
+                                <input
+                                    type="text"
+                                    placeholder="Поиск по имени или фамилии"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="search-input"
+                                />
+                                {searchQuery && (
+                                    <button
+                                        onClick={() => setSearchQuery('')}
+                                        className="clear-search-button"
+                                    >
+                                        ×
+                                    </button>
+                                )}
                             </div>
-                        )}
-
-                        {error && (
-                            <div className="alert error">
-                                {error}
-                                <button onClick={() => setError(null)}>×</button>
-                            </div>
-                        )}
-
-                        <div className="search-box">
-                            <input
-                                type="text"
-                                placeholder="Поиск по имени или фамилии"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                            {searchQuery && (
-                                <button
-                                    onClick={() => setSearchQuery('')}
-                                    className="clear-search"
-                                >
-                                    ×
-                                </button>
-                            )}
                         </div>
 
-                        {loading ? (
-                            <div className="loading">Загрузка данных...</div>
-                        ) : (
-                            <div className="students-table">
-                                <div className="table-header">
-                                    <div>ФИО</div>
-                                    <div>Группа</div>
-                                </div>
+                        <div className="students-list">
+                            <table className="students-table">
+                                <thead>
+                                <tr>
+                                    <th>ФИО</th>
+                                    <th>Группа</th>
+                                    <th>Курс</th>
+                                    <th>Средний балл</th>
+                                    <th>Выбрать</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {filteredStudents.length > 0 ? (
+                                    filteredStudents.map((student) => (
+                                        <tr
+                                            key={student.studentId}
+                                            className={selectedStudents.includes(student.studentId) ? 'selected' : ''}
+                                        >
+                                            <td>{student.surname} {student.name}</td>
+                                            <td>{student.groupNumber || '-'}</td>
+                                            <td>{student.course || '-'}</td>
+                                            <td className={student.averageGrade ? 'has-grade' : 'no-grade'}>
+                                                {student.averageGrade || '-'}
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedStudents.includes(student.studentId)}
+                                                    onChange={() => handleSelectStudent(student.studentId)}
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" className="no-results">Студенты не найдены</td>
+                                    </tr>
+                                )}
+                                </tbody>
+                            </table>
+                        </div>
 
-                                {filteredStudents.map(student => (
-                                    <div
-                                        key={`student-${student.id}`}
-                                        className={`table-row ${selectedId === student.id ? 'selected' : ''}`}
-                                        onClick={() => {
-                                            setSelectedId(student.id);
-                                            setError(null);
-                                        }}
-                                    >
-                                        <div>{student.surname} {student.name}</div>
-                                        <div>{student.groupNumber || '-'}</div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
 
-                        <button
-                            onClick={handleDelete}
-                            disabled={!selectedId}
-                            className="delete-btn"
-                        >
-                            Удалить выбранного студента
-                        </button>
+                        <div className="delete-students-container">
+                            <button
+                                onClick={handleDeleteSelected}
+                                disabled={selectedStudents.length === 0}
+                                className="delete-button"
+                            >
+                                Удалить выбранных студентов
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -165,4 +206,4 @@ const AdminDeleteStudent = () => {
     );
 };
 
-export default AdminDeleteStudent;
+export default DeleteStudent;

@@ -1,212 +1,153 @@
-/* Base styles */
-.admin-delete-page {
+.admin-students-container {
     font-family: 'Roboto', sans-serif;
-    background-color: #f5f7fa;
+    background-color: #f8f9fa;
     min-height: 100vh;
 }
 
-.admin-container {
+.admin-students-content {
     display: flex;
+    padding: 20px;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 20px;
 }
 
-.content-wrapper {
+.admin-students-main {
     flex: 1;
     margin-left: 25px;
 }
 
-.delete-student-card {
+.students-card {
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 30px;
 }
 
-.delete-student-card h2 {
+.students-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.students-header h2 {
+    margin: 0;
     color: #1a3353;
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 28px;
     font-weight: 600;
 }
 
-/* Search box */
-.search-box {
-    position: relative;
-    margin-bottom: 20px;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-.clear-search {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #999;
-}
-
-/* Table styles */
-.students-table {
-    border: 1px solid #eee;
-    border-radius: 6px;
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-.table-header {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    background-color: #1a3353;
-    color: white;
-    padding: 12px 15px;
-    font-weight: 500;
-}
-
-.table-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    padding: 12px 15px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.table-row:hover {
-    background-color: #f8fafc;
-}
-
-.table-row.selected {
-    background-color: #e6f0ff;
-    position: relative;
-}
-
-.table-row.selected::after {
-    content: "✓";
-    position: absolute;
-    right: 15px;
+.success-message {
     color: #28a745;
-    font-weight: bold;
-}
-
-/* Button styles */
-.delete-btn {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background 0.2s;
-    width: 100%;
-    max-width: 300px;
-    display: block;
-    margin-left: auto;
-}
-
-.delete-btn:hover {
-    background-color: #c82333;
-}
-
-.delete-btn:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-/* Status messages */
-.alert {
-    padding: 12px 15px;
-    border-radius: 6px;
+    font-size: 16px;
     margin-bottom: 20px;
-    display: flex;
+}
+
+.students-list {
+    margin-top: 20px;
+}
+
+.list-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    font-weight: 500;
+    color: #666;
+}
+
+.student-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
     align-items: center;
 }
 
-.alert.success {
-    background-color: #d4edda;
-    color: #155724;
+.student-row.selected {
+    background-color: #f0f8ff; /* Цвет выделенной строки */
 }
 
-.alert.error {
-    background-color: #f8d7da;
-    color: #721c24;
+.student-name {
+    font-weight: 500;
 }
 
-.alert button {
-    margin-left: auto;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
+.has-grade {
+    color: #28a745;
+    font-weight: 500;
 }
 
-/* Loading and empty states */
-.loading {
-    padding: 30px;
-    text-align: center;
-    color: #666;
+.no-grade {
+    color: #6c757d;
 }
 
 .no-results {
     padding: 30px;
     text-align: center;
     color: #6c757d;
-    font-style: italic;
+    font-size: 16px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .admin-container {
+.delete-button {
+    background-color: #1a3353;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    text-align: center;
+}
+
+.delete-button:hover {
+    background-color: #0d1f3d;
+}
+
+.loading, .error {
+    padding: 40px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.loading {
+    color: #666;
+}
+
+.error {
+    color: #d9534f;
+}
+
+@media (max-width: 992px) {
+    .admin-students-content {
         flex-direction: column;
-        padding: 15px;
     }
 
-    .content-wrapper {
+    .admin-students-main {
         margin-left: 0;
         margin-top: 20px;
     }
+}
 
-    .table-header,
-    .table-row {
-        grid-template-columns: 1fr;
+@media (max-width: 768px) {
+    .admin-students-content {
+        padding: 15px;
     }
-}
 
-/* Выделение выбранного студента */
-.table-row.selected {
-    background-color: #e6f0ff;
-    position: relative;
-}
+    .students-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
-.table-row.selected::after {
-    content: "✓";
-    position: absolute;
-    right: 15px;
-    color: #28a745;
-    font-weight: bold;
-}
+    .list-header, .student-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
 
-/* Кнопка удаления */
-.delete-btn {
-    background-color: #dc3545;
-    color: white;
-    /* ... */
-}
-
-.delete-btn:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-    opacity: 0.7;
+    .students-header h2 {
+        font-size: 24px;
+    }
 }

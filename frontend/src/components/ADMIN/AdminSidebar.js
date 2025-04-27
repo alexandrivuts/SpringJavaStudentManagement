@@ -11,9 +11,9 @@ const AdminSidebar = ({ activeSection, setActiveSection }) => {
         { id: 'add-student', label: 'Добавить студента', navigate: () => navigate('/admin/students/add') },
         { id: 'delete-student', label: 'Удалить студента', navigate: () => navigate('/admin/students/delete') },
         { id: 'edit-session', label: 'Редактировать сессию', navigate: () => navigate('/admin/session/edit') },
-        { id: 'fill-session', label: 'Заполнить сессию', navigate: () => navigate('/admin/session/add') },
+        { id: 'add-session', label: 'Заполнить сессию', navigate: () => navigate('/admin/session/add') },
+        { id: 'delete-group', label: 'Группы', navigate: () => navigate('/admin/groups/delete') },
         { id: 'add-group', label: 'Добавить группу', navigate: () => navigate('/admin/groups/add') },
-        { id: 'delete-group', label: 'Удалить группу', navigate: () => navigate('/admin/groups/delete') }
     ];
 
     return (

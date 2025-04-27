@@ -16,7 +16,6 @@ const Group = () => {
             try {
                 const token = localStorage.getItem('token');
 
-                // 1. Получаем данные текущего пользователя
                 const userResponse = await axios.get('http://localhost:8080/api/student/profile', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -28,12 +27,10 @@ const Group = () => {
 
                 setCurrentUserGroup(userGroup);
 
-                // 2. Получаем всех студентов
                 const allStudentsResponse = await axios.get('http://localhost:8080/api/student/all', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
-                // 3. Фильтруем студентов по группе
                 const filteredStudents = allStudentsResponse.data.filter(
                     student => student.groupNumber === userGroup
                 );
@@ -63,33 +60,37 @@ const Group = () => {
                 <div className="group-container">
                     <h2>Моя группа: {currentUserGroup}</h2>
 
-                    <div className="group-members">
-                        <div className="group-header">
-                            <span className="header-name">ФИО</span>
-                            <span className="header-email">Email</span>
-                            <span className="header-grade">Средний балл</span>
-                        </div>
-
-                        {groupStudents.length > 0 ? (
-                            groupStudents.map((student, index) => (
-                                <div key={index} className="student-row">
-                                    <span className="student-name">
-                                        {student.surname} {student.name}
-                                    </span>
-                                    <span className="student-email">
-                                        {student.email || '-'}
-                                    </span>
-                                    <span className={`student-grade ${student.averageGrade ? 'has-grade' : 'no-grade'}`}>
-                                        {student.averageGrade || '-'}
-                                    </span>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="no-members">
-                                В группе нет студентов или данные не загружены
-                            </div>
-                        )}
+                    <div className="students-list">
+                        <table className="students-table">
+                            <thead>
+                            <tr>
+                                <th>ФИО</th>
+                                <th>Email</th>
+                                <th>Средний балл</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {groupStudents.length > 0 ? (
+                                groupStudents.map((student, index) => (
+                                    <tr key={index}>
+                                        <td>{student.surname} {student.name}</td>
+                                        <td>{student.email || '-'}</td>
+                                        <td className={`student-grade ${student.averageGrade ? 'has-grade' : 'no-grade'}`}>
+                                            {student.averageGrade || '-'}
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="3" className="no-results">
+                                        В группе нет студентов
+                                    </td>
+                                </tr>
+                            )}
+                            </tbody>
+                        </table>
                     </div>
+
                 </div>
             </div>
         </div>

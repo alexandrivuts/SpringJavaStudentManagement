@@ -8,7 +8,7 @@ const StudentSession = () => {
     const [transcript, setTranscript] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [activeSection, setActiveSection] = useState('session'); // Устанавливаем активную секцию
+    const [activeSection, setActiveSection] = useState('session');
 
     useEffect(() => {
         const fetchTranscript = async () => {
@@ -44,19 +44,24 @@ const StudentSession = () => {
                     <h2>Моя сессия: {transcript.courseName}</h2>
 
                     <div className="session-content">
-                        <div className="session-header">
-                            <span className="header-subject">Предмет</span>
-                            <span className="header-grade">Оценка</span>
-                        </div>
-
-                        {transcript.exams.map((exam, index) => (
-                            <div key={index} className="exam-row">
-                                <span className="exam-subject">{exam.subject}</span>
-                                <span className={`exam-grade grade-${exam.grade}`}>
-                                    {exam.grade}
-                                </span>
-                            </div>
-                        ))}
+                        <table className="session-table">
+                            <thead>
+                            <tr>
+                                <th>Предмет</th>
+                                <th>Оценка</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {transcript.exams.map((exam, index) => (
+                                <tr key={index}>
+                                    <td>{exam.subject}</td>
+                                    <td className={`exam-grade grade-${exam.grade}`}>
+                                        {exam.grade}
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

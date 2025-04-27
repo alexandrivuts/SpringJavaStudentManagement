@@ -30,48 +30,40 @@
 
 .session-content {
     margin-top: 20px;
+    overflow-x: auto;
 }
 
-.session-header {
-    display: flex;
-    padding: 10px 15px;
-    font-weight: 600;
-    color: #1a3353;
-    border-bottom: 2px solid #e0e0e0;
-    margin-bottom: 10px;
+.session-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
 }
 
-.header-subject {
-    flex: 3;
-}
-
-.header-grade {
-    flex: 1;
-    text-align: right;
-}
-
-.exam-row {
-    display: flex;
+.session-table th,
+.session-table td {
     padding: 12px 15px;
+    text-align: left;
     border-bottom: 1px solid #f0f0f0;
-    align-items: center;
+    font-size: 14px;
 }
 
-.exam-row:last-child {
-    border-bottom: none;
+.session-table th {
+    background-color: #f8f9fa;
+    color: #1a3353;
+    font-weight: 600;
 }
 
-.exam-subject {
-    flex: 3;
-    color: #333;
+.session-table td:last-child,
+.session-table th:last-child {
+    text-align: center;
+    width: 120px;
 }
 
 .exam-grade {
-    flex: 1;
-    text-align: right;
     font-weight: 600;
-    padding: 4px 8px;
+    padding: 6px 10px;
     border-radius: 4px;
+    display: inline-block;
 }
 
 .grade-5 {
@@ -105,7 +97,8 @@
         padding: 15px;
     }
 
-    .session-header, .exam-row {
-        font-size: 14px;
+    .session-table th,
+    .session-table td {
+        padding: 10px 12px;
     }
 }

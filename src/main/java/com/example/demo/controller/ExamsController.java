@@ -57,6 +57,7 @@ public class ExamsController {
         List<ExamDto> examDtos = exams.stream()
                 .map(exam -> {
                     ExamDto dto = new ExamDto();
+                    dto.setExamId(exam.getExam_id());  // Добавляем ID
                     dto.setSubject(exam.getSubject());
                     dto.setCourse(exam.getCourse());
                     return dto;
@@ -69,13 +70,24 @@ public class ExamsController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/update/{examId}")
     public ResponseEntity<ExamDto> updateExam(@PathVariable int examId, @RequestBody ExamDto examDto) {
+        // Получаем экзамен по ID
         Exams exam = examsService.findById(examId);
 
+        // Обновляем данные экзамена
         exam.setSubject(examDto.getSubject());
         exam.setCourse(examDto.getCourse());
 
+        // Сохраняем изменения
         examsService.update(exam);
 
-        return ResponseEntity.ok(examDto);
+        // Создаем новый объект ExamDto для ответа
+        ExamDto updatedExamDto = new ExamDto();
+        updatedExamDto.setExamId(exam.getExam_id());
+        updatedExamDto.setSubject(exam.getSubject());
+        updatedExamDto.setCourse(exam.getCourse());
+
+        // Возвращаем обновленные данные экзамена
+        return ResponseEntity.ok(updatedExamDto);
     }
+
 }

@@ -14,6 +14,10 @@ import AdminProfile from "./components/ADMIN/AdminProfile";
 import AdminAllStudents from "./components/ADMIN/AdminAllStudents";
 import AddStudent from "./components/ADMIN/AddStudent";
 import DeleteStudent from "./components/ADMIN/DeleteStudent";
+import ManageExams from "./components/ADMIN/ManageExams";
+import AddSession from "./components/ADMIN/AddSession";
+import AddGroup from "./components/ADMIN/AddGroup";
+import DeleteGroup from "./components/ADMIN/DeleteGroup";
 
 function App() {
     return (
@@ -33,8 +37,10 @@ function App() {
                 <Route path="/admin/students" element={<AdminAllStudents />} />
                 <Route path="/admin/students/add" element={<AddStudent />} />
                 <Route path="/admin/students/delete" element={<DeleteStudent />} />
-
-
+                <Route path="/admin/session/edit" element={<ManageExams />} />
+                <Route path="/admin/session/add" element={<AddSession />} />
+                <Route path="/admin/groups/add" element={<AddGroup />} />
+                <Route path="/admin/groups/delete" element={<DeleteGroup />} />
             </Routes>
         </Router>
     );

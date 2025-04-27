@@ -1,0 +1,70 @@
+/* Убрал дублирующие стили, оставил только специфичные для формы */
+.add-group-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    margin-bottom: 30px; /* Добавил отступ снизу */
+}
+
+.add-group-card h2 {
+    margin: 0 0 25px 0; /* Как в admin-profile */
+    color: #1a3353;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    color: #666;
+    font-size: 14px; /* Как в detail-label */
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #f8f9fa; /* Как в detail-value */
+    color: #333;
+}
+
+.submit-button {
+    background-color: #1a3353;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+/* Сообщения (success/error) */
+.success-message {
+    color: #28a745;
+    background-color: #e8f5e9;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.error-message {
+    color: #d9534f;
+    background-color: #fdecea;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: center;
+}

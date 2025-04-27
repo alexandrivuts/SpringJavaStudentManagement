@@ -55,6 +55,7 @@ public class StudentController {
         List<StudentProfileDto> studentDtos = students.stream()
                 .map(student -> {
                     StudentProfileDto dto = new StudentProfileDto();
+                    dto.setStudentId(student.getStudent_id()); // Добавляем ID студента
                     dto.setName(student.getUser().getName());
                     dto.setSurname(student.getUser().getSurname());
                     dto.setEmail(student.getUser().getEmail());
@@ -73,6 +74,7 @@ public class StudentController {
 
         return ResponseEntity.ok(studentDtos);
     }
+
 
     @GetMapping("/search")
     public ResponseEntity<List<StudentProfileDto>> searchStudents(
