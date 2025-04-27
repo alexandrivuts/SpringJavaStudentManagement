@@ -1,0 +1,99 @@
+.accountant-scholarships-container {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.accountant-scholarships-content {
+    display: flex;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.accountant-scholarships-main {
+    flex: 1;
+    margin-left: 25px;
+}
+
+.scholarships-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+}
+
+.scholarships-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.scholarships-header h2 {
+    margin: 0;
+    color: #1a3353;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.scholarships-list {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.scholarships-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.scholarships-table th,
+.scholarships-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+}
+
+.scholarships-table th {
+    background-color: #f8f9fa;
+    color: #1a3353;
+    font-weight: 600;
+}
+
+.scholarships-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.no-results {
+    padding: 20px;
+    text-align: center;
+    color: #6c757d;
+    font-size: 16px;
+}
+
+.loading, .error {
+    padding: 40px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.loading {
+    color: #666;
+}
+
+.error {
+    color: #d9534f;
+}
+
+@media (max-width: 768px) {
+    .scholarships-table th,
+    .scholarships-table td {
+        padding: 10px 12px;
+    }
+
+    .scholarships-table {
+        margin-top: 10px;
+    }
+}

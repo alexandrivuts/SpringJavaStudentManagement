@@ -1,0 +1,96 @@
+.accountant-sidebar {
+    width: 280px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    margin-right: 25px;
+    height: fit-content;
+    overflow: hidden;
+}
+
+.sidebar-header {
+    padding: 20px;
+    background-color: #1a3353;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-list li {
+    margin: 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.menu-list li:last-child {
+    border-bottom: none;
+}
+
+.menu-button {
+    width: 100%;
+    padding: 14px 25px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 15px;
+    color: #444;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.menu-button:hover {
+    background: #f5f7fa;
+    color: #1a3353;
+    padding-left: 30px;
+}
+
+.menu-button.active {
+    background: #e6f0ff;
+    color: #1a3353;
+    font-weight: 500;
+    border-left: 4px solid #1a3353;
+}
+
+.menu-button.active:hover {
+    padding-left: 25px;
+}
+
+@media (max-width: 992px) {
+    .accountant-sidebar {
+        width: 240px;
+        margin-right: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .accountant-sidebar {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 25px;
+    }
+
+    .sidebar-header {
+        padding: 15px;
+    }
+
+    .menu-button {
+        padding: 12px 20px;
+    }
+
+    .menu-button:hover {
+        padding-left: 25px;
+    }
+}

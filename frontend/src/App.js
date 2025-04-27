@@ -18,6 +18,11 @@ import ManageExams from "./components/ADMIN/ManageExams";
 import AddSession from "./components/ADMIN/AddSession";
 import AddGroup from "./components/ADMIN/AddGroup";
 import DeleteGroup from "./components/ADMIN/DeleteGroup";
+import AccountantProfile from "./components/ACCOUNTANT/AccountantProfile";
+import AccountantAllStudents from "./components/ACCOUNTANT/AccountantAllStudents";
+import Scholarships from "./components/ACCOUNTANT/Scholarships";
+import EditScholarship from "./components/ACCOUNTANT/EditScholarship";
+import ScholarshipReport from "./components/ACCOUNTANT/ScholarshipReport";
 
 function App() {
     return (
@@ -41,6 +46,12 @@ function App() {
                 <Route path="/admin/session/add" element={<AddSession />} />
                 <Route path="/admin/groups/add" element={<AddGroup />} />
                 <Route path="/admin/groups/delete" element={<DeleteGroup />} />
+                <Route path="/accountant" element={<AccountantProfile />} />
+                <Route path="/accountant/students" element={<AccountantAllStudents />} />
+                <Route path="/accountant/scholarships" element={<Scholarships />} />
+                <Route path="/accountant/scholarships/edit" element={<EditScholarship />} />
+                <Route path="/accountant/report" element={<ScholarshipReport />} />
+
             </Routes>
         </Router>
     );
