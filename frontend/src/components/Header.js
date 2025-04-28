@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoIosArrowDown } from 'react-icons/io';
-import './Header.css';
+import '../styles/Header.css';
 
 const Header = () => {
     const navigate = useNavigate();
